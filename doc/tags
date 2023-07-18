@@ -1,0 +1,17 @@
+:SM	streamer-mode.txt	/*:SM*
+:SMedit	streamer-mode.txt	/*:SMedit*
+:SMoff	streamer-mode.txt	/*:SMoff*
+:SMsecure	streamer-mode.txt	/*:SMsecure*
+:SMsoft	streamer-mode.txt	/*:SMsoft*
+:StreamerMode	streamer-mode.txt	/*:StreamerMode*
+:StreamerModeEdit	streamer-mode.txt	/*:StreamerModeEdit*
+:StreamerModeOff	streamer-mode.txt	/*:StreamerModeOff*
+:StreamerModeSecure	streamer-mode.txt	/*:StreamerModeSecure*
+:StreamerModeSoft	streamer-mode.txt	/*:StreamerModeSoft*
+edit	streamer-mode.txt	/*edit*
+secure	streamer-mode.txt	/*secure*
+soft	streamer-mode.txt	/*soft*
+streamer-mode.command	streamer-mode.txt	/*streamer-mode.command*
+streamer-mode.level	streamer-mode.txt	/*streamer-mode.level*
+streamer-mode.nvim	streamer-mode.txt	/*streamer-mode.nvim*
+streamer-mode.setup()	streamer-mode.txt	/*streamer-mode.setup()*

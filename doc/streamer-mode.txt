@@ -1,0 +1,121 @@
+==============================================================================
+							   *streamer-mode.nvim*
+
+			      STREAMER MODE    ~
+
+by Kolkhis           
+
+
+Intro 
+ 
+    streamer-mode.nvim is plugin that will hide your environment variables 
+ and sensitive Git config information.
+
+
+==============================================================================
+							*streamer-mode.setup()*
+streamer-mode.setup({opts})                         
+    Setup function to be run by user. Configures the defaults, pickers and
+    extensions of telescope.
+
+    Usage: ~
+>
+    require('streamer-mode').setup{
+      paths = {
+        -- Default configuration can be used by calling this with an empty
+	-- table.
+        -- name = '*/path/*',
+        -- Defaults:
+        venv = '*/venv/*',
+        virtualenv = '*/virtualenv/*',
+        aliases = '*/.bash_aliases',
+        dotfiles = '*/.dotfiles/*',
+        nodotdot = '*/dotfiles/*',
+        powershell = '*.ps1',
+        gitconfig = '*/.gitconfig',
+      },
+
+      -- Exclude any options from the default config above by passing their
+      -- names in a list, as a string:
+      exclude = { 'nodotdot', 'powershell' }  -- NOTE: this must be a {table/list}
+
+      level = 'secure', -- | 'edit' | 'soft' (see more info below)
+
+      conceal_char = '*'  -- Default. This is what will be displayed instead
+	                  -- of your secrets.
+
+    })
+<
+
+The `paths` listed in the example are ON by default. Disable them by passing
+their names to `exclude` during setup.
+
+Level will determine if, and how, the hidden text will be displayed in
+your buffer. See |stremer-mode.level|
+
+==============================================================================
+							 *streamer-mode.level*
+• Levels:
+
+								      *secure*
+    • `'secure'` will disable the text becoming visible until
+      the `level` changes. (see |streamer-mode.command|)
+      You can also type out new exports (or other environment 
+      variables) and the text will not be shown.
+      Like sudo password input.
+
+									*edit*
+    • `'edit'` will enable the text to become visible when the 
+       cursor goes into insert mode on the same line.
+
+									*soft*
+    • `'soft'` means the text will become visible when the cursor is 
+      on the same line.
+
+
+
+==============================================================================
+COMMAND                                                  *streamer-mode.command*
+
+
+	     There are five commands available for Streamer Mode.
+		 Each command has an alias for easier typing.
+	 The new mode will go into effect once the command is called.
+
+
+							       *:StreamerMode*
+									 *:SM*
+    • `:StreamerMode` (or `:SM`) - Starts Streamer Mode.
+
+
+
+							    *:StreamerModeOff*
+								      *:SMoff*
+    • `:StreamerModeOff` (or `:SMoff`) - Shuts off Streamer Mode.
+
+
+
+							 *:StreamerModeSecure*
+								   *:SMsecure*
+    • `:StreamerModeSecure` (or `:SMsecure`) - 
+		Starts Streamer Mode in 'secure' mode.
+
+
+
+							    *:StreamerModeEdit*
+								     *:SMedit*
+    • `:StreamerModeEdit` (or `:SMedit`) - Starts Streamer Mode in 'edit' mode.
+
+
+
+
+							   *:StreamerModeSoft*
+								     *:SMsoft*
+    • `:StreamerModeSoft` (or `:SMsoft`) - Starts Streamer Mode in 'soft' mode.
+
+
+
+
+
+
+vim:tw=78:ts=8:ft=help:norl:
