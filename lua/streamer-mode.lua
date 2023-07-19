@@ -69,6 +69,12 @@ M._matches = {}
 -- :h streamer-mode
 ---@param opts table
 M.setup = function(opts)
+	-- Gather initial options from setup to use throughout
+	M._opts['level'] = opts['level'] or M._opts['level']
+	M._opts['paths'] = opts['paths'] or M._opts['paths']
+	M._opts['exclude'] = opts['exclude'] or M._opts['exclude']
+	M._opts['conceal_char'] = opts['conceal_char'] or M._opts['conceal_char']
+	M._opts['default_state'] = opts['default_state'] or M._opts['default_state']
   if opts['preset'] == true then
     opts = M.preset_opts
   end
@@ -236,5 +242,6 @@ M.preset_opts = {
   default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
 }
+M._opts = M.preset_opts
 
 return M
