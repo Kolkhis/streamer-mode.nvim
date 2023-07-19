@@ -21,7 +21,8 @@ streamer-mode.setup({opts})
     extensions of telescope.
 
     Usage: ~
->
+    >
+
     require('streamer-mode').setup{
       paths = {
         -- Default configuration can be used by calling this with an empty
@@ -45,6 +46,9 @@ streamer-mode.setup({opts})
 
       level = 'secure', -- | 'edit' | 'soft' (see more info below)
 
+      default_state = 'on',  -- Whether or not streamer mode turns on 
+			     -- when nvim is launched.
+
       conceal_char = '*'  -- Default. This is what will be displayed instead
 	                  -- of your secrets.
 
@@ -63,18 +67,18 @@ your buffer. See |stremer-mode.level|
 								    *sm.levels*
 • Levels:
 
-								      *secure*
+							*sm.secure* | *secure*
     • `'secure'` will disable the text becoming visible until
       the `level` changes. (see |streamer-mode.command|)
       You can also type out new exports (or other environment 
       variables) and the text will not be shown.
       Like sudo password input.
 
-									*edit*
+							    *sm.edit* | *edit*
     • `'edit'` will enable the text to become visible when the 
        cursor goes into insert mode on the same line.
 
-									*soft*
+							    *sm.soft* | *soft*
     • `'soft'` means the text will become visible when the cursor is 
       on the same line.
 
@@ -124,6 +128,14 @@ your buffer. See |stremer-mode.level|
 
 
 
+==============================================================================
+			      CONCEAL CHARACTER			*sm.conceal*
 
+
+					    *conceal_char* | *sm.conceal_char*
+
+	 This is the character that will show up instead of your secrets.
+	 You can set a custom conceal character by passing the `conceal_char`
+	 argument to |.setup()|
 
 vim:tw=78:ts=8:ft=help:norl:

@@ -8,11 +8,17 @@
 :StreamerModeOff	streamer-mode.txt	/*:StreamerModeOff*
 :StreamerModeSecure	streamer-mode.txt	/*:StreamerModeSecure*
 :StreamerModeSoft	streamer-mode.txt	/*:StreamerModeSoft*
+conceal_char	streamer-mode.txt	/*conceal_char*
 edit	streamer-mode.txt	/*edit*
 secure	streamer-mode.txt	/*secure*
 sm.command	streamer-mode.txt	/*sm.command*
+sm.conceal	streamer-mode.txt	/*sm.conceal*
+sm.conceal_char	streamer-mode.txt	/*sm.conceal_char*
+sm.edit	streamer-mode.txt	/*sm.edit*
 sm.levels	streamer-mode.txt	/*sm.levels*
+sm.secure	streamer-mode.txt	/*sm.secure*
 sm.setup	streamer-mode.txt	/*sm.setup*
+sm.soft	streamer-mode.txt	/*sm.soft*
 soft	streamer-mode.txt	/*soft*
 streamer-mode.command	streamer-mode.txt	/*streamer-mode.command*
 streamer-mode.levels	streamer-mode.txt	/*streamer-mode.levels*
