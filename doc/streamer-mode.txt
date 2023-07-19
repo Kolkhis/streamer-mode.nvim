@@ -1,7 +1,7 @@
 ==============================================================================
+				STREAMER MODE 
 							   *streamer-mode.nvim*
 
-			      STREAMER MODE    ~
 
 by Kolkhis           
 
@@ -13,7 +13,9 @@ Intro
 
 
 ==============================================================================
+				    SETUP
 							*streamer-mode.setup()*
+								    *sm.setup*
 streamer-mode.setup({opts})                         
     Setup function to be run by user. Configures the defaults, pickers and
     extensions of telescope.
@@ -28,6 +30,8 @@ streamer-mode.setup({opts})
         -- Defaults:
         venv = '*/venv/*',
         virtualenv = '*/virtualenv/*',
+        dotenv = '*/.env',
+        config = '*/.config/*',
         aliases = '*/.bash_aliases',
         dotfiles = '*/.dotfiles/*',
         nodotdot = '*/dotfiles/*',
@@ -37,7 +41,7 @@ streamer-mode.setup({opts})
 
       -- Exclude any options from the default config above by passing their
       -- names in a list, as a string:
-      exclude = { 'nodotdot', 'powershell' }  -- NOTE: this must be a {table/list}
+      exclude = { 'nodotdot', 'powershell' }  -- NOTE: this must be a { list }
 
       level = 'secure', -- | 'edit' | 'soft' (see more info below)
 
@@ -54,7 +58,9 @@ Level will determine if, and how, the hidden text will be displayed in
 your buffer. See |stremer-mode.level|
 
 ==============================================================================
-							 *streamer-mode.level*
+				    LEVELS
+							 *streamer-mode.levels*
+								    *sm.levels*
 • Levels:
 
 								      *secure*
@@ -75,7 +81,9 @@ your buffer. See |stremer-mode.level|
 
 
 ==============================================================================
-COMMAND                                                  *streamer-mode.command*
+				   COMMANDS
+						       *streamer-mode.command*
+								  *sm.command*
 
 
 	     There are five commands available for Streamer Mode.

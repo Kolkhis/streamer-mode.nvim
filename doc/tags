@@ -10,8 +10,11 @@
 :StreamerModeSoft	streamer-mode.txt	/*:StreamerModeSoft*
 edit	streamer-mode.txt	/*edit*
 secure	streamer-mode.txt	/*secure*
+sm.command	streamer-mode.txt	/*sm.command*
+sm.levels	streamer-mode.txt	/*sm.levels*
+sm.setup	streamer-mode.txt	/*sm.setup*
 soft	streamer-mode.txt	/*soft*
 streamer-mode.command	streamer-mode.txt	/*streamer-mode.command*
-streamer-mode.level	streamer-mode.txt	/*streamer-mode.level*
+streamer-mode.levels	streamer-mode.txt	/*streamer-mode.levels*
 streamer-mode.nvim	streamer-mode.txt	/*streamer-mode.nvim*
 streamer-mode.setup()	streamer-mode.txt	/*streamer-mode.setup()*
