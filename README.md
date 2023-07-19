@@ -17,6 +17,13 @@ If you find a bug, please let me know! I'll try to fix it as soon as I can.
 If anyone has any requests for new concealments, customizations, or other features, please don't hesitate to let me know. I'll add them!
 
 
+Jump to
+* [Installation](#installation)
+* [Setup](#setup)
+* [Levels](#levels)
+* [Commands](#commands)
+* [Donation](#donation)
+
 
 
 ### Current Features
