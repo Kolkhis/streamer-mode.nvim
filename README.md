@@ -2,6 +2,8 @@
 
 # Streamer Mode - Be Safe!
 
+### Streamer Mode - a Neovim plugin to hide your environment variables.
+
 This plugin is not just for streamers, but anyone who wants to conceal their environment
 variables and other sensitive information.
 
