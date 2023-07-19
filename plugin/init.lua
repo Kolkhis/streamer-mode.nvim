@@ -1,0 +1,2 @@
+require('streamer-mode')
+
