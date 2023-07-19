@@ -210,3 +210,11 @@ The new mode will go into effect once the command is called.
 
 
 
+
+
+## Donation
+
+If you like this plugin and want to give me money, you can!
+
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A4M7MV7) 
