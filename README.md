@@ -175,19 +175,18 @@ require('streamer-mode').setup({
 
 There are three different levels, each with different behavior.
 
-    * `'secure'` will disable the text becoming visible until
-      the `level` changes. (see |streamer-mode.command|)
-      You can also type out new exports (or other environment 
-      variables) and the text will not be shown.
-      Like sudo password input.
+* `'secure'` will disable the text becoming visible until
+the `level` changes. (see |streamer-mode.command|)
+You can also type out new exports (or other environment 
+variables) and the text will not be shown.
+Like sudo password input.
 
-				
-    * `'edit'` (default) will enable the text to become visible when the 
-       cursor goes into insert mode on the same line.
+    
+* `'edit'` (default) will enable the text to become visible when the 
+cursor goes into insert mode on the same line.
 
-									*soft*
-    * `'soft'` means the text will become visible when the cursor is 
-      on the same line.
+* `'soft'` means the text will become visible when the cursor is 
+on the same line.
 
 
 
