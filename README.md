@@ -62,7 +62,6 @@ Plug 'Kolkhis/streamer-mode.nvim'
 
 
 After installing, you can configure Streamer Mode to use the default settings with:
-
 ```lua
 require('streamer-mode').setup({ preset = true })
 ```
@@ -79,7 +78,6 @@ require('streamer-mode').setup({ paths = { all = '*' } })
 It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
 Here's an example that sets `default_state` to 'off', so `:SM` must be run to start
 Streamer Mode:
-
 ```lua
 require('streamer-mode').setup({ default_state = 'off' })
 ```
@@ -91,7 +89,6 @@ require('streamer-mode').setup({ default_state = 'off' })
 If you want to use the defaults, but exclude some paths, you can.
 Just don't pass in the `paths` argument, and pass in the other settings
 you want to customize (`exclude`, `level`, and `default_state`):
-
 ```lua
 require('streamer-mode').setup({
   level = 'secure',
@@ -134,6 +131,7 @@ require('streamer-mode').setup({
 ```
 
 
+
 #### Parameters:
 
 * `paths`: Dictionary-like Table. The paths/files that `streamer-mode` will apply to.
@@ -148,6 +146,8 @@ when you first launch a Neovim session. Leaving it `'on'` (default)
 is recommended.
 * `exclude`: List-like table of strings. Only necessary if you want to use the 
 some of the defaults, but not all of them.
+* `conceal_char`: String. This is the character that will be displayed in place of your hidden text.
+
 
 
 #### Example Custom Setup
