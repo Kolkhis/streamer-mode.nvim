@@ -74,10 +74,7 @@ M.setup = function(opts)
   end
   if opts['paths'] then
     for name, path in pairs(opts['paths']) do
-		if path:match('~') then
-			path:gsub('~', vim.fn.expand('~'))
-		end
-      M.paths[name] = path
+      M.paths[name] = vim.fs.normalize(path, { expand_env = true })
     end
   end
   -- Remove any unwanted paths
@@ -87,8 +84,9 @@ M.setup = function(opts)
     end
   end
   if opts['level'] then
+    M._level = opts['level']
     if opts['level'] == 'secure' then
-      vim.o.concealcursor = 'ivn'
+      vim.o.concealcursor = 'ivnc'
     elseif opts['level'] == 'edit' then
       vim.o.concealcursor = 'vn'
     elseif opts['level'] == 'soft' then
@@ -97,8 +95,12 @@ M.setup = function(opts)
   end
   M.conceal_char = opts['conceal_char'] or '*'
   vim.o.conceallevel = 1
-  table.insert(M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M.conceal_char }))
   M._cmds = vim.api.nvim_get_autocmds({ group = conceal_augroup })
+  M.default_state = opts['default_state'] or M.default_state
+  if M.default_state == 'on' then
+    M.start_streamer_mode()
+    M.default_state = 'on'
+  end
 end
 
 -- Not yet fully tested. Use setup() instead.
@@ -109,11 +111,15 @@ end
 ---@param name string
 ---@param path string
 M.add_path = function(name, path)
+  if path:match('~') then
+    path = path:gsub('~', vim.fn.expand('~'))
+  end
   M.paths[name] = path
 end
 
 ---Activates Streamer Mode
 M.start_streamer_mode = function()
+  table.insert(M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M.conceal_char }))
   M.setup_env_conceals()
   if M.paths['gitconfig'] then
     M.setup_git_conceals(M.paths['gitconfig'])
@@ -132,35 +138,26 @@ M.remove_conceals = function()
   vim.o.conceallevel = 0
 end
 
--- M.initial_startup = function()
---   M.setup({ preset = true })
---   M.start_streamer_mode()
---   M.stop_streamer_mode()
--- end
-
 ---Sets up conceals for environment variables
 M.setup_env_conceals = function()
   for name, path in pairs(M.paths) do
-    vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter'}, {
+    vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
       pattern = path,
       callback = function()
-		table.insert(M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M.conceal_char }))
+        table.insert(
+          M._matches,
+          vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M.conceal_char })
+        )
       end,
       group = conceal_augroup,
     })
   end
 end
+
 ---Sets up conceals for .gitconfig, with the given '*/path/*'
 ---@param path string
 M.setup_git_conceals = function(path)
---   vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
---     pattern = path,
---     callback = function()
---       vim.fn.matchadd('Conceal', M._GitConcealPattern, 9999, -1, { conceal = M.conceal_char })
---     end,
---     group = conceal_augroup,
---   })
-   vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
+  vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
     pattern = path,
     callback = function()
       table.insert(M._matches, vim.fn.matchadd('Conceal', M._GitConcealPattern, 9999, -1, { conceal = M.conceal_char }))
@@ -168,32 +165,31 @@ M.setup_git_conceals = function(path)
     group = conceal_augroup,
   })
   vim.o.conceallevel = 1
- vim.o.conceallevel = 1
 end
 
 --#region "User Commands"
 vim.api.nvim_create_user_command('StreamerMode', function()
-  M.setup(M.paths)
+  M.setup({ paths = M.paths, default_state = 'on', level = M._level })
 end, { desc = 'Starts streamer mode.' })
 
 vim.api.nvim_create_user_command('StreamerModeOff', function()
-  M.remove_conceals()
+  M.stop_streamer_mode()
 end, { desc = 'Stops streamer mode.' })
 
 vim.api.nvim_create_user_command('StreamerModeSecure', function()
-  M.setup({ level = 'secure' })
+  M.setup({ level = 'secure', default_state = 'on' })
   M.start_streamer_mode()
-end, { desc = 'Starts streamer mode in Secure mode.' })
+end, { desc = 'Starts streamer mode with Secure level enabled.' })
 
 vim.api.nvim_create_user_command('StreamerModeEdit', function()
-  M.setup({ level = 'edit' })
+  M.setup({ level = 'edit', default_state = 'on' })
   M.start_streamer_mode()
-end, { desc = 'Starts streamer mode in Edit mode.' })
+end, { desc = 'Starts streamer mode with Edit level enabled.' })
 
 vim.api.nvim_create_user_command('StreamerModeSoft', function()
-  M.setup({ level = 'soft' })
+  M.setup({ level = 'soft', default_state = 'on' })
   M.start_streamer_mode()
-end, { desc = 'Starts streamer mode in Soft mode.' })
+end, { desc = 'Starts streamer mode with Soft level enabled.' })
 
 -- ALIASES YEE
 
@@ -207,19 +203,19 @@ vim.api.nvim_create_user_command('SMoff', function()
 end, { desc = 'Stops streamer mode.' })
 
 vim.api.nvim_create_user_command('SMsecure', function()
-  M.setup({ level = 'secure' })
+  M.setup({ level = 'secure', default_state = 'on' })
   M.start_streamer_mode()
-end, { desc = 'Starts streamer mode in Secure mode.' })
+end, { desc = 'Starts streamer mode with Secure level enabled.' })
 
 vim.api.nvim_create_user_command('SMedit', function()
-  M.setup({ level = 'edit' })
+  M.setup({ level = 'edit', default_state = 'on' })
   M.start_streamer_mode()
-end, { desc = 'Starts streamer mode in Edit mode.' })
+end, { desc = 'Starts streamer mode with Edit level enabled.' })
 
 vim.api.nvim_create_user_command('SMsoft', function()
-  M.setup({ level = 'soft' })
+  M.setup({ level = 'soft', default_state = 'on' })
   M.start_streamer_mode()
-end, { desc = 'Starts streamer mode in Soft mode.' })
+end, { desc = 'Starts streamer mode with Soft level enabled.' })
 --#endregion
 
 M.preset_opts = {
@@ -237,9 +233,8 @@ M.preset_opts = {
     gitconfig = '*/.gitconfig',
   },
   level = 'secure', -- | 'edit' | 'soft'
+  default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
 }
-
--- M.initial_startup()
 
 return M
