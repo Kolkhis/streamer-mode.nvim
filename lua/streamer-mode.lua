@@ -132,11 +132,11 @@ M.remove_conceals = function()
   vim.o.conceallevel = 0
 end
 
-M.initial_startup = function()
-  M.setup({ preset = true })
-  M.start_streamer_mode()
-  M.stop_streamer_mode()
-end
+-- M.initial_startup = function()
+--   M.setup({ preset = true })
+--   M.start_streamer_mode()
+--   M.stop_streamer_mode()
+-- end
 
 ---Sets up conceals for environment variables
 M.setup_env_conceals = function()
@@ -240,6 +240,6 @@ M.preset_opts = {
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
 }
 
-M.initial_startup()
+-- M.initial_startup()
 
 return M

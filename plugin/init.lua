@@ -1,2 +1,2 @@
-require('streamer-mode')
+require('streamer-mode').setup({ preset = true })
 
