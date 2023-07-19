@@ -66,6 +66,14 @@ After installing, you can configure Streamer Mode to use the default settings wi
 require('streamer-mode').setup({ preset = true })
 ```
 
+It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
+
+Here's an example that sets `default_state` to 'off', so `:SM` must be run to start
+Streamer Mode:
+
+```lua
+require('streamer-mode').setup({ default_state = 'off' })
+```
 
 If you want to use the defaults, but exclude some paths, you can.
 Just don't pass in the `paths` argument, and pass in the other settings
@@ -78,6 +86,8 @@ require('streamer-mode').setup({
   default_state = 'off'
 })
 ```
+
+
 
 #### Default Settings
 
