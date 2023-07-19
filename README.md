@@ -60,20 +60,33 @@ Plug 'Kolkhis/streamer-mode.nvim'
 ## Setup
 ###### *:h sm.setup*
 
+
 After installing, you can configure Streamer Mode to use the default settings with:
 
 ```lua
 require('streamer-mode').setup({ preset = true })
 ```
 
-It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
 
+
+To set up Streamer Mode for all files everywhere:
+```lua
+require('streamer-mode').setup({ paths = { all = '*' } })
+```
+
+
+
+It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
 Here's an example that sets `default_state` to 'off', so `:SM` must be run to start
 Streamer Mode:
 
 ```lua
 require('streamer-mode').setup({ default_state = 'off' })
 ```
+
+
+
+
 
 If you want to use the defaults, but exclude some paths, you can.
 Just don't pass in the `paths` argument, and pass in the other settings
