@@ -14,25 +14,37 @@ M.paths = {
 }
 
 -- regex lol.
-M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
-M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 M._PowerShellConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
+
+-- Git
 M._GitSigningKeyConcelPattern = [[\(signingkey\s\{-\}\)\@<=.*$]]
 M._GitEmailConcealPattern = [[\(email\s\{-\}\)\@<=.*$]]
 M._GitNameConcealPattern = [[\(name\s\{-\}\)\@<=.*$]]
-M._MasterConcealPattern =
-  [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 
-M._ConcealPatterns = {
-  env = M._EnvConcealPattern,
-  exports = M._BashConcealPattern,
-  powershell = M._PowerShellConcealPattern,
-  git = M._GitConcealPattern,
-  git_name = M._GitNameConcealPattern,
-  git_email = M._GitEmailConcealPattern,
-  git_signingkey = M._GitSigningKeyConcelPattern,
-}
+-- SSH
+M._HostNameConcealPattern = [[\(Hostname\s\{-\}\)\@<=.*$]]
+
+-- Compounded 
+M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
+M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
+M._MasterConcealPattern =
+  [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
+
+-- M._ConcealPatterns = {
+--   env = M._EnvConcealPattern,
+--   bash_exports = M._BashConcealPattern,
+--   powershell = M._PowerShellConcealPattern,
+--   git = M._GitConcealPattern,
+--   git_name = M._GitNameConcealPattern,
+--   git_email = M._GitEmailConcealPattern,
+--   git_signingkey = M._GitSigningKeyConcelPattern,
+--	 host_name = M._HostNameConcealPattern,
+-- }
+
+M.set_patterns = function(opts)
+  M._opts.patterns = opts.patterns or M._ConcealPatterns
+end
 
 local conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
@@ -68,12 +80,12 @@ M._matches = {}
 -- :h streamer-mode
 ---@param opts table
 M.setup = function(opts)
-	-- Gather initial options from setup to use throughout
-	M._opts['level'] = opts['level'] or M._opts['level']
-	M._opts['paths'] = opts['paths'] or M._opts['paths']
-	M._opts['exclude'] = opts['exclude'] or M._opts['exclude']
-	M._opts['conceal_char'] = opts['conceal_char'] or M._opts['conceal_char']
-	M._opts['default_state'] = opts['default_state'] or M._opts['default_state']
+  -- Gather initial options from setup to use throughout
+  M._opts['level'] = opts['level'] or M._opts['level']
+  M._opts['paths'] = opts['paths'] or M._opts['paths']
+  M._opts['exclude'] = opts['exclude'] or M._opts['exclude']
+  M._opts['conceal_char'] = opts['conceal_char'] or M._opts['conceal_char']
+  M._opts['default_state'] = opts['default_state'] or M._opts['default_state']
   if opts['preset'] == true then
     opts = M.preset_opts
   end
@@ -241,6 +253,15 @@ M.preset_opts = {
   default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
 }
+
 M._opts = M.preset_opts
+
+
+function M.test(opts)
+	print('Test fn called\n', opts.field, '\n', opts['field3'], '\n', opts.field4)
+end
+
+M.test({field = 1, field2 = 2})
+
 
 return M
