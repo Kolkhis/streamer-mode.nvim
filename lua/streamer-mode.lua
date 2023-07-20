@@ -30,8 +30,10 @@ M._HostNameConcealPattern = [[\(Hostname\s\{-\}\)\@<=.*$]]
 -- Compounded
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
 M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
-M._MasterConcealPattern =
-  [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
+-- M._MasterConcealPattern =
+--   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
+
+M._MasterConcealPattern = ([[%s\|%s\|%s\|%s]]):format(M._APIKeyConcealPattern, M._GitConcealPattern, M._HostNameConcealPattern, M._EnvConcealPattern)
 
 M._ConcealPatterns = {
   env = M._EnvConcealPattern,
