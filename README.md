@@ -7,8 +7,7 @@
 This plugin is not just for streamers, but anyone who wants to conceal their environment
 variables and other sensitive information.
 
-
-![streamer-mode-demo](https://github.com/Kolkhis/streamer-mode.nvim/assets/36500473/d8e551d0-b73a-4e65-93b7-6eebe2a05027)
+![Streamer-Mode Demo](https://github.com/Kolkhis/streamer-mode.nvim/assets/36500473/3fc1fc02-f4f4-4c6f-a5f7-bbc077f384fa)
 > Short demo of the basic modes.
 
 
