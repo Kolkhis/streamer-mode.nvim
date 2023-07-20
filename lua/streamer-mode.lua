@@ -1,7 +1,7 @@
 M = {}
 
 -- Set up default paths.
-M.paths = { all = '*' }
+M.paths = { all = '*/*' }
 -- M.paths = {
 --   venv = '*/venv/*',
 --   virtualenv = '*/virtualenv/*',
@@ -33,6 +33,7 @@ M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 
 -- SSH
 M._HostNameConcealPattern = [[\(Hostname\s\{-\}\)\@<=.*$]]
+M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- Compounded
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
@@ -40,7 +41,28 @@ M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(sign
 -- M._MasterConcealPattern =
 --   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 
-M._MasterConcealPattern = ([[%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s]]):format(
+-- envs -> gitUserName
+M._MasterConcealPattern =
+  [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$\|\(TOKEN\s\{-\}\)\@<=.*$\|\(API_KEY\s\{-\}\)\@<=.*$\|\(credential.helper\s\{-\}\)\@<=.*$\|\(user.name\s\{-\}\)\@<=.*$]]
+
+-- SSH IdentityFile, Hostname and GitUserPasswordConcealPattern
+M._OverflowConcealPattern =
+  [[\(user.password\s\{-\}\)\@<=.*$\|\(Hostname\s\{-\}\)\@<=.*$\|\(IdentityFile\s\{-\}\)\@<=.*$]]
+
+-- M._MasterConcealPattern = ([[%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s]]):format(
+--   M._APIKeyConcealPattern,
+--   M._TOKENConcealPattern,
+--   M._GitConcealPattern,
+--   M._HostNameConcealPattern,
+--   M._EnvConcealPattern,
+--   M._PowerShellConcealPattern,
+--   M._BashConcealPattern,
+--   M._GitUserNameConcealPattern,
+--   M._GitUserPasswordConcealPattern,
+--   M._GitCredentialConcealPattern
+-- )
+
+M._ConcealPatterns = {
   M._APIKeyConcealPattern,
   M._TOKENConcealPattern,
   M._GitConcealPattern,
@@ -50,20 +72,17 @@ M._MasterConcealPattern = ([[%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s]]):format(
   M._BashConcealPattern,
   M._GitUserNameConcealPattern,
   M._GitUserPasswordConcealPattern,
-  M._GitCredentialConcealPattern
-)
-
-M._ConcealPatterns = {
-  env = M._EnvConcealPattern,
-  bash_exports = M._BashConcealPattern,
-  powershell = M._PowerShellConcealPattern,
-  git = M._GitConcealPattern,
-  git_name = M._GitNameConcealPattern,
-  git_email = M._GitEmailConcealPattern,
-  git_signingkey = M._GitSigningKeyConcelPattern,
-  host_name = M._HostNameConcealPattern,
-  api_key = M._APIKeyConcealPattern,
+  M._GitCredentialConcealPattern,
 }
+-- env = M._EnvConcealPattern,
+-- bash_exports = M._BashConcealPattern,
+-- powershell = M._PowerShellConcealPattern,
+-- git = M._GitConcealPattern,
+-- git_name = M._GitNameConcealPattern,
+-- git_email = M._GitEmailConcealPattern,
+-- git_signingkey = M._GitSigningKeyConcelPattern,
+-- host_name = M._HostNameConcealPattern,
+-- api_key = M._APIKeyConcealPattern,
 
 M.set_patterns = function(opts)
   M._opts.patterns = opts.patterns or M._ConcealPatterns
@@ -181,10 +200,8 @@ M.setup_env_conceals = function()
     vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
       pattern = path,
       callback = function()
-        table.insert(
-          M._matches,
-          vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-        )
+      table.insert( M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
+      table.insert( M._matches, vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
       end,
       group = conceal_augroup,
     })
@@ -197,10 +214,8 @@ M.setup_git_conceals = function(path)
   vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
     pattern = path,
     callback = function()
-      table.insert(
-        M._matches,
-        vim.fn.matchadd('Conceal', M._GitConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-      )
+      table.insert( M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
+      table.insert( M._matches, vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
     end,
     group = conceal_augroup,
   })
@@ -218,24 +233,20 @@ end, { desc = 'Stops streamer mode.' })
 
 vim.api.nvim_create_user_command('StreamerModeSecure', function()
   M.setup({ level = 'secure', default_state = 'on' })
-  M.start_streamer_mode()
 end, { desc = 'Starts streamer mode with Secure level enabled.' })
 
 vim.api.nvim_create_user_command('StreamerModeEdit', function()
   M.setup({ level = 'edit', default_state = 'on' })
-  M.start_streamer_mode()
 end, { desc = 'Starts streamer mode with Edit level enabled.' })
 
 vim.api.nvim_create_user_command('StreamerModeSoft', function()
   M.setup({ level = 'soft', default_state = 'on' })
-  M.start_streamer_mode()
 end, { desc = 'Starts streamer mode with Soft level enabled.' })
 
 -- ALIASES YEE
 
 vim.api.nvim_create_user_command('SM', function()
-  M.setup(M.paths)
-  M.start_streamer_mode()
+  M.setup({ default_state = 'on' })
 end, { desc = 'Starts streamer mode.' })
 
 vim.api.nvim_create_user_command('SMoff', function()
@@ -244,22 +255,20 @@ end, { desc = 'Stops streamer mode.' })
 
 vim.api.nvim_create_user_command('SMsecure', function()
   M.setup({ level = 'secure', default_state = 'on' })
-  M.start_streamer_mode()
 end, { desc = 'Starts streamer mode with Secure level enabled.' })
 
 vim.api.nvim_create_user_command('SMedit', function()
   M.setup({ level = 'edit', default_state = 'on' })
-  M.start_streamer_mode()
 end, { desc = 'Starts streamer mode with Edit level enabled.' })
 
 vim.api.nvim_create_user_command('SMsoft', function()
   M.setup({ level = 'soft', default_state = 'on' })
-  M.start_streamer_mode()
 end, { desc = 'Starts streamer mode with Soft level enabled.' })
 --#endregion
 
 M.preset_opts = {
-  paths = { M.paths
+  paths = {
+    all = '*',
     -- The names are unimportant, only the paths matter.
     -- Any path in here will hide exports and .gitconfig personals. (and $env:s)
     -- venv = '*/venv/*',
