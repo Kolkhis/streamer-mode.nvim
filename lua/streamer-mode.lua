@@ -1,21 +1,24 @@
 M = {}
 
 -- Set up default paths.
-M.paths = {
-  venv = '*/venv/*',
-  virtualenv = '*/virtualenv/*',
-  dotenv = '*/.env',
-  config = '*/.config/*',
-  aliases = '*/.bash_aliases',
-  dotfiles = '*/.dotfiles/*',
-  nodotdot = '*/dotfiles/*',
-  powershell = '*.ps1',
-  gitconfig = '*/.gitconfig',
-}
-
-M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
+M.paths = { all = '*' }
+-- M.paths = {
+--   venv = '*/venv/*',
+--   virtualenv = '*/virtualenv/*',
+--   dotenv = '*/.env',
+--   config = '*/.config/*',
+--   aliases = '*/.bash_aliases',
+--   dotfiles = '*/.dotfiles/*',
+--   nodotdot = '*/dotfiles/*',
+--   powershell = '*.ps1',
+--   gitconfig = '*/.gitconfig',
+--   configini = '*/*.ini',
+--   secretsyaml = '*/*.yaml'
+-- }
 
 -- regex lol.
+M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
+M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
 M._PowerShellConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
 
@@ -23,6 +26,10 @@ M._BashConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
 M._GitSigningKeyConcelPattern = [[\(signingkey\s\{-\}\)\@<=.*$]]
 M._GitEmailConcealPattern = [[\(email\s\{-\}\)\@<=.*$]]
 M._GitNameConcealPattern = [[\(name\s\{-\}\)\@<=.*$]]
+-- Git Credentials
+M._GitCredentialConcealPattern = [[\(credential.helper\s\{-\}\)\@<=.*$]]
+M._GitUserNameConcealPattern = [[\(user.name\s\{-\}\)\@<=.*$]]
+M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 
 -- SSH
 M._HostNameConcealPattern = [[\(Hostname\s\{-\}\)\@<=.*$]]
@@ -33,7 +40,18 @@ M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(sign
 -- M._MasterConcealPattern =
 --   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 
-M._MasterConcealPattern = ([[%s\|%s\|%s\|%s]]):format(M._APIKeyConcealPattern, M._GitConcealPattern, M._HostNameConcealPattern, M._EnvConcealPattern)
+M._MasterConcealPattern = ([[%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s]]):format(
+  M._APIKeyConcealPattern,
+  M._TOKENConcealPattern,
+  M._GitConcealPattern,
+  M._HostNameConcealPattern,
+  M._EnvConcealPattern,
+  M._PowerShellConcealPattern,
+  M._BashConcealPattern,
+  M._GitUserNameConcealPattern,
+  M._GitUserPasswordConcealPattern,
+  M._GitCredentialConcealPattern
+)
 
 M._ConcealPatterns = {
   env = M._EnvConcealPattern,
@@ -241,19 +259,19 @@ end, { desc = 'Starts streamer mode with Soft level enabled.' })
 --#endregion
 
 M.preset_opts = {
-  paths = {
+  paths = { M.paths
     -- The names are unimportant, only the paths matter.
     -- Any path in here will hide exports and .gitconfig personals. (and $env:s)
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/.dotfiles/*',
-    nodotdot = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
-    ssh = '*/.ssh/*',
+    -- venv = '*/venv/*',
+    -- virtualenv = '*/virtualenv/*',
+    -- dotenv = '*/.env',
+    -- config = '*/.config/*',
+    -- aliases = '*/.bash_aliases',
+    -- dotfiles = '*/.dotfiles/*',
+    -- nodotdot = '*/dotfiles/*',
+    -- powershell = '*.ps1',
+    -- gitconfig = '*/.gitconfig',
+    -- ssh = '*/.ssh/*',
   },
   level = 'secure', -- | 'edit' | 'soft'
   default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
