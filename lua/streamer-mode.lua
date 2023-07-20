@@ -1,4 +1,3 @@
-require('dev.globals')
 M = {}
 
 -- Set up default paths.
