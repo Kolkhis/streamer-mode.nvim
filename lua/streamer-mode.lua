@@ -1,7 +1,14 @@
 M = {}
 
+local function combine_patterns()
+	local all = ''
+	for i, pat in ipairs(M._ConcealPatterns) do
+		all = all .. [[\|]] .. pat
+	end
+end
+
 -- Set up default paths.
-M.paths = { all = '*/*' }
+M.paths = { all = '*' }
 -- M.paths = {
 --   venv = '*/venv/*',
 --   virtualenv = '*/virtualenv/*',
@@ -47,20 +54,7 @@ M._MasterConcealPattern =
 
 -- SSH IdentityFile, Hostname and GitUserPasswordConcealPattern
 M._OverflowConcealPattern =
-  [[\(user.password\s\{-\}\)\@<=.*$\|\(Hostname\s\{-\}\)\@<=.*$\|\(IdentityFile\s\{-\}\)\@<=.*$]]
-
--- M._MasterConcealPattern = ([[%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s\|%s]]):format(
---   M._APIKeyConcealPattern,
---   M._TOKENConcealPattern,
---   M._GitConcealPattern,
---   M._HostNameConcealPattern,
---   M._EnvConcealPattern,
---   M._PowerShellConcealPattern,
---   M._BashConcealPattern,
---   M._GitUserNameConcealPattern,
---   M._GitUserPasswordConcealPattern,
---   M._GitCredentialConcealPattern
--- )
+  [[\(user.password\s\{-\}\)\@<=.*$\|\(IdentityFile\s\{-\}\)\@<=.*$\|\(Hostname\s\{-\}\)\@<=.*$]]
 
 M._ConcealPatterns = {
   M._APIKeyConcealPattern,
@@ -74,6 +68,7 @@ M._ConcealPatterns = {
   M._GitUserPasswordConcealPattern,
   M._GitCredentialConcealPattern,
 }
+
 -- env = M._EnvConcealPattern,
 -- bash_exports = M._BashConcealPattern,
 -- powershell = M._PowerShellConcealPattern,
@@ -172,10 +167,8 @@ end
 
 ---Activates Streamer Mode
 M.start_streamer_mode = function()
-  table.insert(
-    M._matches,
-    vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-  )
+  table.insert( M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
+  table.insert( M._matches, vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
   M.setup_env_conceals()
   if M.paths['gitconfig'] then
     M.setup_git_conceals(M.paths['gitconfig'])
@@ -200,8 +193,14 @@ M.setup_env_conceals = function()
     vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
       pattern = path,
       callback = function()
-      table.insert( M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
-      table.insert( M._matches, vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
+        table.insert(
+          M._matches,
+          vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
+        )
+        table.insert(
+          M._matches,
+          vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
+        )
       end,
       group = conceal_augroup,
     })
@@ -214,8 +213,14 @@ M.setup_git_conceals = function(path)
   vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
     pattern = path,
     callback = function()
-      table.insert( M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
-      table.insert( M._matches, vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
+      table.insert(
+        M._matches,
+        vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
+      )
+      table.insert(
+        M._matches,
+        vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
+      )
     end,
     group = conceal_augroup,
   })
@@ -291,3 +296,4 @@ M.preset_opts = {
 M._opts = M.preset_opts
 
 return M
+

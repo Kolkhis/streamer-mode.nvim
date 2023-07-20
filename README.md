@@ -27,7 +27,7 @@ Jump to
 
 ### Current Features
 
-* Currently supports the concealment of `export`, `$env:`, `name`, `email`, and `signingkey`
+* Currently supports the concealment of `export`, `$env:`, `name`, `email`, `signingkey`, `Hostname`, `IdentityFile`, `user.name`, `user.email`, `user.password`, `API_KEY`, `TOKEN`, and `credential.helper`. More can be added on request!
 
 * Hides environment variables and sensitive `.gitconfig` information.
 
@@ -69,16 +69,11 @@ Plug 'Kolkhis/streamer-mode.nvim'
 ###### *:h sm.setup*
 
 
-After installing, you can configure Streamer Mode to use the default settings with:
+After installing, you can configure Streamer Mode to use the default settings by using `preset =
+true` in the setup function.
+streamer-mode.nvim applies filters to all files by default.
 ```lua
 require('streamer-mode').setup({ preset = true })
-```
-
-
-
-To set up Streamer Mode for all files everywhere:
-```lua
-require('streamer-mode').setup({ paths = { all = '*' } })
 ```
 
 
@@ -92,11 +87,7 @@ require('streamer-mode').setup({ default_state = 'off' })
 
 
 
-
-
-If you want to use the defaults, but exclude some paths, you can.
-Just don't pass in the `paths` argument, and pass in the other settings
-you want to customize (`exclude`, `level`, and `default_state`):
+If you want to customize (`exclude`, `level`, and `default_state`):
 ```lua
 require('streamer-mode').setup({
   level = 'secure',
@@ -104,6 +95,34 @@ require('streamer-mode').setup({
   default_state = 'off'
 })
 ```
+
+
+If you want to use custom paths or filetypes instead of applying the filter to all files, you can.
+Just pass in the `paths` argument, along with your own paths in the format:
+`paths = { name = '*/path/* }`
+
+Here's an example: 
+
+```lua
+
+require('streamer-mode').setup({
+  paths = {
+    -- You can use any name you want, the '*/path/*' is the important part.
+	-- Any path in here will hide exports and .gitconfig personals. (and $env:s)
+    venv = '*/venv/*',
+    virtualenv = '*/virtualenv/*',
+    dotenv = '*/.env',
+    config = '*/.config/*',
+    aliases = '*/.bash_aliases',
+    dotfiles = '*/.dotfiles/*',
+    nodotdot = '*/dotfiles/*',
+    powershell = '*.ps1',
+    gitconfig = '*/.gitconfig',
+  },
+  level = 'edit', -- | 'secure' | 'soft'
+})
+```
+
 
 
 
