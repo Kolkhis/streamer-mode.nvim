@@ -257,11 +257,4 @@ M.preset_opts = {
 M._opts = M.preset_opts
 
 
-function M.test(opts)
-	print('Test fn called\n', opts.field, '\n', opts['field3'], '\n', opts.field4)
-end
-
-M.test({field = 1, field2 = 2})
-
-
 return M
