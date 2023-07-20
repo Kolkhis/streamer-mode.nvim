@@ -13,6 +13,8 @@ M.paths = {
   gitconfig = '*/.gitconfig',
 }
 
+M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
+
 -- regex lol.
 M._PowerShellConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
@@ -25,22 +27,23 @@ M._GitNameConcealPattern = [[\(name\s\{-\}\)\@<=.*$]]
 -- SSH
 M._HostNameConcealPattern = [[\(Hostname\s\{-\}\)\@<=.*$]]
 
--- Compounded 
+-- Compounded
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
 M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 M._MasterConcealPattern =
   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 
--- M._ConcealPatterns = {
---   env = M._EnvConcealPattern,
---   bash_exports = M._BashConcealPattern,
---   powershell = M._PowerShellConcealPattern,
---   git = M._GitConcealPattern,
---   git_name = M._GitNameConcealPattern,
---   git_email = M._GitEmailConcealPattern,
---   git_signingkey = M._GitSigningKeyConcelPattern,
---	 host_name = M._HostNameConcealPattern,
--- }
+M._ConcealPatterns = {
+  env = M._EnvConcealPattern,
+  bash_exports = M._BashConcealPattern,
+  powershell = M._PowerShellConcealPattern,
+  git = M._GitConcealPattern,
+  git_name = M._GitNameConcealPattern,
+  git_email = M._GitEmailConcealPattern,
+  git_signingkey = M._GitSigningKeyConcelPattern,
+  host_name = M._HostNameConcealPattern,
+  api_key = M._APIKeyConcealPattern,
+}
 
 M.set_patterns = function(opts)
   M._opts.patterns = opts.patterns or M._ConcealPatterns
@@ -50,6 +53,11 @@ local conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = tr
 M._matches = {}
 
 -- Sets up streamer-mode for paths specified in `opts`: { paths = { name = '/path/' }}
+local cursor_levels = {
+  secure = 'ivnc',
+  edit = 'vn',
+  soft = '',
+}
 -- Can be called { preset = true } to use the defaults.
 -- Parameters: ~
 --   • {opts}  Table of named paths
@@ -81,42 +89,31 @@ M._matches = {}
 ---@param opts table
 M.setup = function(opts)
   -- Gather initial options from setup to use throughout
-  M._opts['level'] = opts['level'] or M._opts['level']
-  M._opts['paths'] = opts['paths'] or M._opts['paths']
-  M._opts['exclude'] = opts['exclude'] or M._opts['exclude']
-  M._opts['conceal_char'] = opts['conceal_char'] or M._opts['conceal_char']
-  M._opts['default_state'] = opts['default_state'] or M._opts['default_state']
-  if opts['preset'] == true then
-    opts = M.preset_opts
+  M._opts.level = opts.level or M._opts.level
+  M._opts.paths = opts.paths or M._opts.paths
+  M._opts.exclude = opts.exclude or M._opts.exclude
+  M._opts.conceal_char = opts.conceal_char or M._opts.conceal_char
+  M._opts.default_state = opts.default_state or M._opts.default_state
+  if opts.preset == true then
+    M._opts = M.preset_opts
   end
-  if opts['paths'] then
-    for name, path in pairs(opts['paths']) do
-      M.paths[name] = vim.fs.normalize(path, { expand_env = true })
-    end
+  for name, path in pairs(M._opts.paths) do
+    M.paths[name] = vim.fs.normalize(path, { expand_env = true })
   end
   -- Remove any unwanted paths
-  if opts['exclude'] then
+  if opts.exclude then
     for i, name in ipairs(opts['exclude']) do
       M.paths[name] = nil
     end
   end
-  if opts['level'] then
-    M._level = opts['level']
-    if opts['level'] == 'secure' then
-      vim.o.concealcursor = 'ivnc'
-    elseif opts['level'] == 'edit' then
-      vim.o.concealcursor = 'vn'
-    elseif opts['level'] == 'soft' then
-      vim.o.concealcursor = ''
-    end
-  end
-  M.conceal_char = opts['conceal_char'] or '*'
+  -- set conceal character
+  vim.o.concealcursor = cursor_levels[M._opts.level]
   vim.o.conceallevel = 1
   M._cmds = vim.api.nvim_get_autocmds({ group = conceal_augroup })
-  M.default_state = opts['default_state'] or M.default_state
-  if M.default_state == 'on' then
+  M._opts.default_state = opts.default_state or M._opts.default_state
+  if M._opts.default_state == 'on' then
     M.start_streamer_mode()
-    M.default_state = 'on'
+    M._opts.default_state = 'on'
   end
 end
 
@@ -136,7 +133,10 @@ end
 
 ---Activates Streamer Mode
 M.start_streamer_mode = function()
-  table.insert(M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M.conceal_char }))
+  table.insert(
+    M._matches,
+    vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
+  )
   M.setup_env_conceals()
   if M.paths['gitconfig'] then
     M.setup_git_conceals(M.paths['gitconfig'])
@@ -163,7 +163,7 @@ M.setup_env_conceals = function()
       callback = function()
         table.insert(
           M._matches,
-          vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M.conceal_char })
+          vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
         )
       end,
       group = conceal_augroup,
@@ -177,7 +177,10 @@ M.setup_git_conceals = function(path)
   vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
     pattern = path,
     callback = function()
-      table.insert(M._matches, vim.fn.matchadd('Conceal', M._GitConcealPattern, 9999, -1, { conceal = M.conceal_char }))
+      table.insert(
+        M._matches,
+        vim.fn.matchadd('Conceal', M._GitConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
+      )
     end,
     group = conceal_augroup,
   })
@@ -186,7 +189,7 @@ end
 
 --#region "User Commands"
 vim.api.nvim_create_user_command('StreamerMode', function()
-  M.setup({ paths = M.paths, default_state = 'on', level = M._level })
+  M.setup({ paths = M.paths, default_state = 'on', level = M._opts.level })
 end, { desc = 'Starts streamer mode.' })
 
 vim.api.nvim_create_user_command('StreamerModeOff', function()
@@ -248,13 +251,14 @@ M.preset_opts = {
     nodotdot = '*/dotfiles/*',
     powershell = '*.ps1',
     gitconfig = '*/.gitconfig',
+    ssh = '*/.ssh/*',
   },
   level = 'secure', -- | 'edit' | 'soft'
   default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
+  conceal_char = '*',
 }
 
 M._opts = M.preset_opts
-
 
 return M
