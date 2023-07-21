@@ -69,6 +69,8 @@ Plug 'Kolkhis/streamer-mode.nvim'
 ###### *:h sm.setup*
 
 
+
+
 After installing, you can configure Streamer Mode to use the default settings by using `preset =
 true` in the setup function.
 streamer-mode.nvim applies filters to all files by default.
@@ -155,10 +157,6 @@ require('streamer-mode').setup({
 
 ```
 
-#### NOTE: While it's possible to set the paths as `all = '*'`, it is not recommended.
-streamer-mode.nvim uses vim's built-in regular expression engine to parse files, and at the moment
-it's very slow. Until I find a way to make it faster, I don't recommend doing this.
-
 
 
 
@@ -240,7 +238,9 @@ The new mode will go into effect once the command is called.
 
 
 
+## Known Issues
 
+ - Calling setup with `{ paths = { all = '*' }}` will cause slight lag.
 
 ## Donation
 
