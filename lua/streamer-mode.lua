@@ -8,20 +8,20 @@ local function combine_patterns()
 end
 
 -- Set up default paths.
-M.paths = { all = '*' }
--- M.paths = {
---   venv = '*/venv/*',
---   virtualenv = '*/virtualenv/*',
---   dotenv = '*/.env',
---   config = '*/.config/*',
---   aliases = '*/.bash_aliases',
---   dotfiles = '*/.dotfiles/*',
---   nodotdot = '*/dotfiles/*',
---   powershell = '*.ps1',
---   gitconfig = '*/.gitconfig',
---   configini = '*/*.ini',
---   secretsyaml = '*/*.yaml'
--- }
+-- M.paths = { all = '*' }
+M.paths = {
+  venv = '*/venv/*',
+  virtualenv = '*/virtualenv/*',
+  dotenv = '*/.env',
+  config = '*/.config/*',
+  aliases = '*/.bash_aliases',
+  dotfiles = '*/.dotfiles/*',
+  nodotdot = '*/dotfiles/*',
+  powershell = '*.ps1',
+  gitconfig = '*/.gitconfig',
+  configini = '*/*.ini',
+  secretsyaml = '*/*.yaml'
+}
 
 -- regex lol.
 M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
@@ -190,7 +190,7 @@ end
 ---Sets up conceals for environment variables
 M.setup_env_conceals = function()
   for name, path in pairs(M.paths) do
-    vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
+    vim.api.nvim_create_autocmd({ 'BufRead', 'BufWinEnter' }, {
       pattern = path,
       callback = function()
         table.insert(
@@ -273,19 +273,19 @@ end, { desc = 'Starts streamer mode with Soft level enabled.' })
 
 M.preset_opts = {
   paths = {
-    all = '*',
+    -- all = '*',
     -- The names are unimportant, only the paths matter.
     -- Any path in here will hide exports and .gitconfig personals. (and $env:s)
-    -- venv = '*/venv/*',
-    -- virtualenv = '*/virtualenv/*',
-    -- dotenv = '*/.env',
-    -- config = '*/.config/*',
-    -- aliases = '*/.bash_aliases',
-    -- dotfiles = '*/.dotfiles/*',
-    -- nodotdot = '*/dotfiles/*',
-    -- powershell = '*.ps1',
-    -- gitconfig = '*/.gitconfig',
-    -- ssh = '*/.ssh/*',
+    venv = '*/venv/*',
+    virtualenv = '*/virtualenv/*',
+    dotenv = '*/.env',
+    config = '*/.config/*',
+    aliases = '*/.bash_aliases',
+    dotfiles = '*/.dotfiles/*',
+    nodotdot = '*/dotfiles/*',
+    powershell = '*.ps1',
+    gitconfig = '*/.gitconfig',
+    ssh = '*/.ssh/*',
   },
   level = 'secure', -- | 'edit' | 'soft'
   default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
@@ -295,5 +295,5 @@ M.preset_opts = {
 
 M._opts = M.preset_opts
 
-return M
 
+return M

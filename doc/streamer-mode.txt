@@ -31,9 +31,6 @@ streamer-mode.setup({opts})
 	paths = {
         -- name = '*/path/*',
         -- Default:
-	all = '*'
-
-	-- To add custom paths instead of using all paths/files:
         venv = '*/venv/*',
         virtualenv = '*/virtualenv/*',
         dotenv = '*/.env',

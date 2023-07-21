@@ -27,7 +27,7 @@ Jump to
 
 ### Current Features
 
-* Currently supports the concealment of `export`, `$env:`, `name`, `email`, `signingkey`, `Hostname`, `IdentityFile`, `user.name`, `user.email`, `user.password`, `API_KEY`, `TOKEN`, and `credential.helper`. More can be added on request!
+* Currently supports the concealment of `export`, `$env:`, `name`, `email`, `signingkey`, `Hostname`, `IdentityFile`, `user.name`, `user.email`, `user.password`, `API_KEY`, `TOKEN`, and `credential.helper`.
 
 * Hides environment variables and sensitive `.gitconfig` information.
 
@@ -87,10 +87,11 @@ require('streamer-mode').setup({ default_state = 'off' })
 
 
 
-If you want to customize ( `level` and `default_state`):
+If you want to customize (`exclude`, `level`, and `default_state`):
 ```lua
 require('streamer-mode').setup({
   level = 'secure',
+  exclude = { 'bash_aliases', 'powershell' },
   default_state = 'off'
 })
 ```
@@ -123,8 +124,6 @@ require('streamer-mode').setup({
 ```
 
 
-
-
 #### Default Settings
 
 The default setup is as follows:
@@ -151,9 +150,15 @@ require('streamer-mode').setup({
   conceal_char = '*'  -- Default. This is what will be displayed instead
                       -- of your secrets.
 
+  exclude = { '' }  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
 })
 
 ```
+
+#### NOTE: While it's possible to set the paths as `all = '*'`, it is not recommended.
+streamer-mode.nvim uses vim's built-in regular expression engine to parse files, and at the moment
+it's very slow. Until I find a way to make it faster, I don't recommend doing this.
+
 
 
 
@@ -169,6 +174,8 @@ See more about the different levels below.
 * `default_state`: Whether or not Streamer Mode will be active 
 when you first launch a Neovim session. Leaving it `'on'` (default)
 is recommended.
+* `exclude`: List-like table of strings. Only necessary if you want to use the 
+some of the defaults, but not all of them.
 * `conceal_char`: String. This is the character that will be displayed in place of your hidden text.
 
 
