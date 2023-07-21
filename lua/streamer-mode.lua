@@ -1,14 +1,5 @@
 M = {}
-
-local function combine_patterns()
-	local all = ''
-	for i, pat in ipairs(M._ConcealPatterns) do
-		all = all .. [[\|]] .. pat
-	end
-end
-
 -- Set up default paths.
--- M.paths = { all = '*' }
 M.paths = {
   venv = '*/venv/*',
   virtualenv = '*/virtualenv/*',
@@ -20,14 +11,15 @@ M.paths = {
   powershell = '*.ps1',
   gitconfig = '*/.gitconfig',
   configini = '*/*.ini',
-  secretsyaml = '*/*.yaml'
+  secretsyaml = '*/*.yaml',
 }
 
 -- regex lol.
 M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
 M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
-M._PowerShellConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
-M._BashConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
+M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
+M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
+
 
 -- Git
 M._GitSigningKeyConcelPattern = [[\(signingkey\s\{-\}\)\@<=.*$]]
@@ -42,16 +34,13 @@ M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 M._HostNameConcealPattern = [[\(Hostname\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
--- Compounded
+-- Compounded (Avoid these)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
 M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
--- M._MasterConcealPattern =
---   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 
--- envs -> gitUserName
+-- envs -> gitUserName -- Don't use. Slow.
 M._MasterConcealPattern =
   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$\|\(TOKEN\s\{-\}\)\@<=.*$\|\(API_KEY\s\{-\}\)\@<=.*$\|\(credential.helper\s\{-\}\)\@<=.*$\|\(user.name\s\{-\}\)\@<=.*$]]
-
 -- SSH IdentityFile, Hostname and GitUserPasswordConcealPattern
 M._OverflowConcealPattern =
   [[\(user.password\s\{-\}\)\@<=.*$\|\(IdentityFile\s\{-\}\)\@<=.*$\|\(Hostname\s\{-\}\)\@<=.*$]]
@@ -59,19 +48,22 @@ M._OverflowConcealPattern =
 M._ConcealPatterns = {
   M._APIKeyConcealPattern,
   M._TOKENConcealPattern,
-  M._GitConcealPattern,
-  M._HostNameConcealPattern,
-  M._EnvConcealPattern,
-  M._PowerShellConcealPattern,
-  M._BashConcealPattern,
+  M._PowerShellEnvConcealPattern,
+  M._BashEnvConcealPattern,
   M._GitUserNameConcealPattern,
   M._GitUserPasswordConcealPattern,
   M._GitCredentialConcealPattern,
+  M._GitSigningKeyConcelPattern,
+  M._GitEmailConcealPattern,
+  M._GitNameConcealPattern,
+  M._HostNameConcealPattern,
+  M._EnvConcealPattern,
 }
 
--- env = M._EnvConcealPattern,
--- bash_exports = M._BashConcealPattern,
--- powershell = M._PowerShellConcealPattern,
+-- TODO: Make a dictionary for user choice on what keywords to filter.
+-- all_env = M._EnvConcealPattern,
+-- exports = M._BashEnvConcealPattern,
+-- powershell = M._PowerShellEnvConcealPattern,
 -- git = M._GitConcealPattern,
 -- git_name = M._GitNameConcealPattern,
 -- git_email = M._GitEmailConcealPattern,
@@ -79,7 +71,14 @@ M._ConcealPatterns = {
 -- host_name = M._HostNameConcealPattern,
 -- api_key = M._APIKeyConcealPattern,
 
-M.set_patterns = function(opts)
+---Callback for autocmds.
+function M:add_match_conceals()
+  for i, conc in ipairs(M._ConcealPatterns) do
+    table.insert(M._matches, vim.fn.matchadd('Conceal', conc, 9999, -1, { conceal = M._opts.conceal_char }))
+  end
+end
+
+function M:set_patterns(opts)
   M._opts.patterns = opts.patterns or M._ConcealPatterns
 end
 
@@ -95,7 +94,7 @@ local cursor_levels = {
 -- Can be called { preset = true } to use the defaults.
 -- Parameters: ~
 --   • {opts}  Table of named paths
---        • paths = { name = '*/path/*' }
+--        • paths = { any_name = '*/path/*' }
 --        • level = 'secure' -- or: 'soft', 'edit'
 --
 --        • levels:
@@ -128,6 +127,8 @@ M.setup = function(opts)
   M._opts.exclude = opts.exclude or M._opts.exclude
   M._opts.conceal_char = opts.conceal_char or M._opts.conceal_char
   M._opts.default_state = opts.default_state or M._opts.default_state
+  -- TODO: Add kwargs for words to conceal: 'export', 'name', etc
+  M._opts.patterns = opts.patterns or M._ConcealPatterns
   if opts.preset == true then
     M._opts = M.preset_opts
   end
@@ -167,8 +168,7 @@ end
 
 ---Activates Streamer Mode
 M.start_streamer_mode = function()
-  table.insert( M._matches, vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
-  table.insert( M._matches, vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char }))
+	M:add_match_conceals()
   M.setup_env_conceals()
   if M.paths['gitconfig'] then
     M.setup_git_conceals(M.paths['gitconfig'])
@@ -193,14 +193,7 @@ M.setup_env_conceals = function()
     vim.api.nvim_create_autocmd({ 'BufRead' }, {
       pattern = path,
       callback = function()
-        table.insert(
-          M._matches,
-          vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-        )
-        table.insert(
-          M._matches,
-          vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-        )
+		  M:add_match_conceals()
       end,
       group = conceal_augroup,
     })
@@ -213,21 +206,13 @@ M.setup_git_conceals = function(path)
   vim.api.nvim_create_autocmd({ 'BufRead' }, {
     pattern = path,
     callback = function()
-      table.insert(
-        M._matches,
-        vim.fn.matchadd('Conceal', M._MasterConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-      )
-      table.insert(
-        M._matches,
-        vim.fn.matchadd('Conceal', M._OverflowConcealPattern, 9999, -1, { conceal = M._opts.conceal_char })
-      )
+		M:add_match_conceals()
     end,
     group = conceal_augroup,
   })
   vim.o.conceallevel = 1
 end
 
---#region "User Commands"
 vim.api.nvim_create_user_command('StreamerMode', function()
   M.setup({ paths = M.paths, default_state = 'on', level = M._opts.level })
 end, { desc = 'Starts streamer mode.' })
@@ -248,8 +233,6 @@ vim.api.nvim_create_user_command('StreamerModeSoft', function()
   M.setup({ level = 'soft', default_state = 'on' })
 end, { desc = 'Starts streamer mode with Soft level enabled.' })
 
--- ALIASES YEE
-
 vim.api.nvim_create_user_command('SM', function()
   M.setup({ default_state = 'on' })
 end, { desc = 'Starts streamer mode.' })
@@ -269,13 +252,11 @@ end, { desc = 'Starts streamer mode with Edit level enabled.' })
 vim.api.nvim_create_user_command('SMsoft', function()
   M.setup({ level = 'soft', default_state = 'on' })
 end, { desc = 'Starts streamer mode with Soft level enabled.' })
---#endregion
 
 M.preset_opts = {
   paths = {
-    -- all = '*',
     -- The names are unimportant, only the paths matter.
-    -- Any path in here will hide exports and .gitconfig personals. (and $env:s)
+    -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
     venv = '*/venv/*',
     virtualenv = '*/virtualenv/*',
     dotenv = '*/.env',
@@ -291,9 +272,9 @@ M.preset_opts = {
   default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
   conceal_char = '*',
+  patterns = M._ConcealPatterns,
 }
 
 M._opts = M.preset_opts
-
 
 return M
