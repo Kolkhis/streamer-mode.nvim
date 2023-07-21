@@ -281,5 +281,5 @@ M.preset_opts = {
 }
 
 M._opts = M.preset_opts
-M.setup({ preset = true })
+
 return M
