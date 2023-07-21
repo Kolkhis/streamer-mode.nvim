@@ -46,8 +46,8 @@ streamer-mode.setup({opts})
 
       level = 'secure', -- | 'edit' | 'soft' (see more info below)
 
-      default_state = 'on',  -- Whether or not streamer mode turns on 
-			     -- when nvim is launched.
+      default_state = 'on',  -- | 'off' : Whether or not streamer mode turns
+                             --           on when nvim is launched.
 
       conceal_char = '*'  -- Default. This is what will be displayed instead
 	                  -- of your secrets.
@@ -95,41 +95,41 @@ your buffer. See |stremer-mode.level|
 	 The new mode will go into effect once the command is called.
 
 
-							       *:StreamerMode*
-									 *:SM*
+						       *:StreamerMode* | *:SM*
+
     • `:StreamerMode` (or `:SM`) - Starts Streamer Mode.
 
 
 
-							    *:StreamerModeOff*
-								      *:SMoff*
+						 *:StreamerModeOff* | *:SMoff*
+
     • `:StreamerModeOff` (or `:SMoff`) - Shuts off Streamer Mode.
 
 
 
-							 *:StreamerModeSecure*
-								   *:SMsecure*
-    • `:StreamerModeSecure` (or `:SMsecure`) - 
-		Starts Streamer Mode in 'secure' mode.
+					   *:StreamerModeSecure* | *:SMsecure*
+
+    • `:StreamerModeSecure` 
+      (or `:SMsecure`) - Starts Streamer Mode in `'secure'` mode.
 
 
 
-							    *:StreamerModeEdit*
-								     *:SMedit*
-    • `:StreamerModeEdit` (or `:SMedit`) - Starts Streamer Mode in 'edit' mode.
+					       *:StreamerModeEdit* | *:SMedit*
+
+    • `:StreamerModeEdit` (or `:SMedit`) - Starts Streamer Mode in `'edit'` mode.
 
 
 
 
-							   *:StreamerModeSoft*
-								     *:SMsoft*
-    • `:StreamerModeSoft` (or `:SMsoft`) - Starts Streamer Mode in 'soft' mode.
+					       *:StreamerModeSoft* | *:SMsoft*
+
+    • `:StreamerModeSoft` (or `:SMsoft`) - Starts Streamer Mode in `'soft'` mode.
 
 
 
 
 ==============================================================================
-			      CONCEAL CHARACTER			*sm.conceal*
+			      CONCEAL CHARACTER		
 
 
 					    *conceal_char* | *sm.conceal_char*
@@ -137,5 +137,45 @@ your buffer. See |stremer-mode.level|
 	 This is the character that will show up instead of your secrets.
 	 You can set a custom conceal character by passing the `conceal_char`
 	 argument to |.setup()|
+
+
+
+==============================================================================
+				DEFAULT STATE
+
+
+					  *default_state* | *sm.default_state*
+
+	This option can be set to either `'on'` or `'off'`, passed into the
+	|setup()| function. 
+
+	`'on'` will start Streamer Mode when Neovim is launched.
+
+	`'off'` will not launch Streamer Mode when Neovim is launched, if this
+	option is set, you need to run `:SM` or `:SM(level)` to start 
+	Stremer Mode.
+
+
+
+==============================================================================
+				    PATHS
+
+							  *paths* | *sm.paths*
+
+	Passed into |setup()|, these are the paths that Streamer Mode will
+	be applied to. 
+	These can be filepaths, filetypes, or just files, in the format:
+
+	`paths = { bashrc = '*/.bashrc', config = '~/.config/*' }`
+
+	Supports the `'*'` wildcard.
+	It is possible to set `paths = { all = '*' }` to enable 
+	Streamer Mode in all files.
+
+	For example if I open `~/.bashrc`, and I haven't specified
+	the path `home = '~/'` or `bash = '*/.bashrc'` in `paths`, then
+	Streamer Mode will not hide any data in that file.
+
+
 
 vim:tw=78:ts=8:ft=help:norl:
