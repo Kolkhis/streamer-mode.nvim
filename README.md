@@ -1,5 +1,3 @@
-
-
 # Streamer Mode - Be Safe!
 
 ### Streamer Mode - a Neovim plugin to hide your environment variables.
@@ -8,40 +6,36 @@ This plugin is not just for streamers, but anyone who wants to conceal their env
 variables and other sensitive information.
 
 ![Streamer-Mode Demo](https://github.com/Kolkhis/streamer-mode.nvim/assets/36500473/3fc1fc02-f4f4-4c6f-a5f7-bbc077f384fa)
-> Short demo of the basic modes.
 
+> Short demo of the basic modes.
 
 If you find a bug, please let me know! I'll try to fix it as soon as I can.
 
-If anyone has any requests for new concealments, customizations, or other features, please don't hesitate to let me know. I'll add them!
-
+If anyone has any requests for new concealments, customizations, or other features, please don't hesitate to let me know. Just [open an issue!](https://github.com/Kolkhis/streamer-mode.nvim/issues) I'll add them!
 
 Jump to
-* [Installation](#installation)
-* [Setup](#setup)
-* [Levels](#levels)
-* [Commands](#commands)
-* [Donation](#donation)
 
-
+- [Installation](#installation)
+- [Setup](#setup)
+- [Levels](#levels)
+- [Commands](#commands)
+- [Donation](#donation)
 
 ### Current Features
 
-* Currently supports the concealment of `export`, `$env:`, `name`, `email`, `signingkey`, `Hostname`, `IdentityFile`, `user.name`, `user.email`, `user.password`, `API_KEY`, `TOKEN`, and `credential.helper`.
+- Currently supports the concealment of `export`, `$env:`, `name`, `email`, `signingkey`, `Hostname`, `IdentityFile`, `user.name`, `user.email`, `user.password`, `API_KEY`, `TOKEN`, and `credential.helper`. Open an issue to request more!
 
-* Hides environment variables and sensitive `.gitconfig` information.
+- Hides environment variables and sensitive `.gitconfig` information.
 
-* Three different levels: Secure, Edit, and Soft
-    * Check [here](#levels) or `:h sm.levels` for more information on level behaviors.
+- Three different levels: Secure, Edit, and Soft
 
-* Ability to create type out new environment variables without displaying them (secure level), like
-  sudo password input.
+  - Check [here](#levels) or `:h sm.levels` for more information on level behaviors.
 
+- Ability to create type out new environment variables without displaying them (secure level), like sudo password input.
 
 ## Installation
 
 Install using your favorite plugin manager.
-
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
@@ -49,13 +43,11 @@ Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 use('Kolkhis/streamer-mode.nvim')
 ```
 
-
 Using [lazy.nvim]()
 
 ```lua
 { 'Kolkhis/streamer-mode.nvim' },
 ```
-
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
@@ -63,36 +55,48 @@ Using [vim-plug](https://github.com/junegunn/vim-plug)
 Plug 'Kolkhis/streamer-mode.nvim'
 ```
 
-
-
 ## Setup
+
 ###### *:h sm.setup*
 
+After installing, just `require('streamer-mode')` in your `init.lua` and you're set to go!
+streamer-mode.nvim applies filters to the most files that will contain sensitive information by default. Check the [default settings](#default-settings)  
 
-
-
-After installing, you can configure Streamer Mode to use the default settings by using `preset = true` in the setup function (recommended).
-streamer-mode.nvim applies filters to the most files that will contain sensitive information by default.
+##### Default setup:
 ```lua
-require('streamer-mode').setup({ preset = true })
-```
+require('streamer-mode')
+```  
+  
+  
 
-To use defaults as well as your own paths:
+Streamer Mode is enabled by default, which means it will turn on when Neovim is launched.  
+To disable this behavior:
+
 ```lua
-require('streamer-mode').setup({ preset = true, paths = {
-            yaml_files = '*/*.yaml'
-        }})
-```
+require('streamer-mode').setup({ default_state = 'off' })
+```  
+  
 
+To use [defaults](#default-settings) as well as your own paths:
 
+```lua
+require('streamer-mode').setup({
+  preset = true,
+  paths = {
+    yaml_files = '*/*.yaml',
+  },
+})
+```  
+  
+  
 It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
 Here's an example that sets `default_state` to 'off', so `:SM` must be run to start
 Streamer Mode:
+
 ```lua
 require('streamer-mode').setup({ default_state = 'off' })
-```
-
-
+```  
+  
 
 If you want to customize (`exclude`, `level`, and `default_state`):
 ```lua
@@ -101,14 +105,15 @@ require('streamer-mode').setup({
   exclude = { 'bash_aliases', 'powershell' },
   default_state = 'off'
 })
-```
-
+```  
+  
+  
 
 If you want to use custom paths or filetypes instead of applying the filter to all files, you can.
 Just pass in the `paths` argument, along with your own paths in the format:
-`paths = { name = '*/path/* }`
+`paths = { name = '*/path/* }`  
 
-Here's an example: 
+Here's an example of a custom configuration:
 
 ```lua
 
@@ -127,19 +132,19 @@ require('streamer-mode').setup({
     gitconfig = '*/.gitconfig',
   },
   level = 'edit', -- | 'secure' | 'soft'
+  default_state = 'off', -- | 'on'
+  exclude = {'powershell', }
 })
 ```
 
-
 While it is possible to enable Streamer Mode for all files, it's not recommended.
-This can slow down Neovim. Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know!).
-You've been warned:
+It's possible for this to slow down Neovim. Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know).  
+  
+
+If you want to do this despite that, you've been warned:
 ```lua
 require('streamer-mode').setup({ paths = { all = '*' } })
-```
-
-
-
+```  
 
 #### Default Settings
 
@@ -160,8 +165,7 @@ require('streamer-mode').setup({
     gitconfig = '*/.gitconfig',
     configini = '*/*.ini',
     yaml_secrets = '*/*.yaml',
-}
-
+    }
   },
   level = 'edit', -- | 'secure' | 'soft'
 
@@ -171,34 +175,32 @@ require('streamer-mode').setup({
                       -- of your secrets.
 
   exclude = { '' }  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
+
 })
 
 ```
 
-
-
-
 #### Parameters:
 
-* `paths`: Dictionary-like Table. The paths/files that `streamer-mode` will apply to.
-    - To apply `streamer-mode` to ALL files:
-        * `{ paths = { all = '*' } }`
-    - Pass in paths in the format `name = '*/path/*`
-    - Pass in filetypes in the format `name = '*.txt`
-* `level`: String. The level in which Streamer Mode will be in effect. 
-See more about the different levels below.
-* `default_state`: Whether or not Streamer Mode will be active 
-when you first launch a Neovim session. Leaving it `'on'` (default)
-is recommended.
-* `exclude`: List-like table of strings. Only necessary if you want to use the 
-some of the defaults, but not all of them.
-* `conceal_char`: String. This is the character that will be displayed in place of your hidden text.
+##### All optional. Just calling this function will use the defaults.
 
-
+- `paths`: Dictionary-like Table. The paths/files that Streamer Mode will apply to.
+  - Pass in paths in the format: `paths = { name = '*/path/* }`
+  - Pass in filetypes in the same format: ` paths = { name = '*.txt }`
+  - You can apply streamer mode to ALL files (not recommended): `paths = { all = '*' }`
+- `level`: String. The level in which Streamer Mode will be in effect.
+  See more about the different [levels](#levels) below.
+- `default_state`: Whether or not Streamer Mode will be active
+  when you first launch a Neovim session. It's recommended to set this to `'off'`,
+  turning it on when needed.
+- `exclude`: List-like table of strings. Only necessary if you want to use the
+  some of the defaults, but not all of them.
+- `conceal_char`: String. This is the character that will be displayed in place of your hidden text.  
 
 #### Example Custom Setup
 
 > init.lua
+
 ```lua
 require('streamer-mode').setup({
   paths = {
@@ -210,59 +212,60 @@ require('streamer-mode').setup({
     gitconfig = '*/.gitconfig',
   },
   level = 'edit',
-  default_state = 'on'
+  default_state = 'on',
+  exclude = { 'powershell', 'dotfiles' }
 })
 ```
 
-
-
 ## Levels
-`:h sm.levels`
 
-There are three different levels, each with different behavior.
+###### *:h sm.levels*
 
-* `'secure'` will disable the text becoming visible until
-the `level` changes. (see |streamer-mode.command|)
-You can also type out new exports (or other environment 
-variables) and the text will not be shown.
-Like sudo password input.
+There are three different levels, each with different behavior.  
 
-    
-* `'edit'` (default) will enable the text to become visible when the 
-cursor goes into insert mode on the same line.
+- `'secure'` will disable the text becoming visible until
+  the `level` changes. (see |streamer-mode.command|)
+  You can also type out new exports (or other environment
+  variables) and the text will not be shown.
+  Like sudo password input.
+- `'edit'` (default) will enable the text to become visible when the
+  cursor goes into insert mode on the same line.
 
-* `'soft'` means the text will become visible when the cursor is 
-on the same line.
-
-
+- `'soft'` means the text will become visible when the cursor is
+  on the same line.
 
 ## Commands
-`:h sm.commands`
+
+###### *:h sm.commands*
 
 There are five commands available for Streamer Mode.
 Each command has an alias for easier typing.
-The new mode will go into effect once the command is called.
+The new mode will go into effect once the command is called.  
+
+- `:StreamerMode` (or `:SM`) - Starts Streamer Mode.
+
+- `:StreamerModeOff` (or `:SMoff`) - Shuts off Streamer Mode.
+
+- `:StreamerModeSecure` (or `:SMsecure`) - Starts streamer mode with `secure` level enabled.
+
+- `:StreamerModeEdit` (or `:SMedit`) - Starts streamer mode with 'edit' level enabled.
+
+- `:StreamerModeSoft` (or `:SMsoft`) - Starts streamer mode with 'soft' level enabled.  
+  
 
 
-* `:StreamerMode` (or `:SM`) - Starts Streamer Mode.
+## Currently Working On
 
-* `:StreamerModeOff` (or `:SMoff`) - Shuts off Streamer Mode.
-
-* `:StreamerModeSecure` (or `:SMsecure`) - Starts streamer mode with `secure` level enabled.
-
-* `:StreamerModeEdit` (or `:SMedit`) - Starts streamer mode with 'edit' level enabled.
-
-* `:StreamerModeSoft` (or `:SMsoft`) - Starts streamer mode with 'soft' level enabled.
-
-
+- [ ] User customization of which keywords they'd like to filter.  
+  
 
 ## Known Issues
 
- - None. Find something? Open an issue.
+- None. Find something? Open an issue!  
+  
 
-## Donation
+## Donation  
 
-If you like this plugin and want to give me money, you can!
+If you like this plugin and want to give me money, you can!  
 
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A4M7MV7) 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A4M7MV7)  
