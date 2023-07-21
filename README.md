@@ -71,13 +71,18 @@ Plug 'Kolkhis/streamer-mode.nvim'
 
 
 
-After installing, you can configure Streamer Mode to use the default settings by using `preset =
-true` in the setup function.
-streamer-mode.nvim applies filters to all files by default.
+After installing, you can configure Streamer Mode to use the default settings by using `preset = true` in the setup function (recommended).
+streamer-mode.nvim applies filters to the most files that will contain sensitive information by default.
 ```lua
 require('streamer-mode').setup({ preset = true })
 ```
 
+To use defaults as well as your own paths:
+```lua
+require('streamer-mode').setup({ preset = true, paths = {
+            yaml_files = '*/*.yaml'
+        }})
+```
 
 
 It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
@@ -126,6 +131,16 @@ require('streamer-mode').setup({
 ```
 
 
+While it is possible to enable Streamer Mode for all files, it's not recommended.
+This can slow down Neovim. Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know!).
+You've been warned:
+```lua
+require('streamer-mode').setup({ paths = { all = '*' } })
+```
+
+
+
+
 #### Default Settings
 
 The default setup is as follows:
@@ -140,10 +155,13 @@ require('streamer-mode').setup({
     dotenv = '*/.env',
     config = '*/.config/*',
     aliases = '*/.bash_aliases',
-    dotfiles = '*/.dotfiles/*',
-    nodotdot = '*/dotfiles/*',
+    dotfiles = '*/dotfiles/*',
     powershell = '*.ps1',
     gitconfig = '*/.gitconfig',
+    configini = '*/*.ini',
+    yaml_secrets = '*/*.yaml',
+}
+
   },
   level = 'edit', -- | 'secure' | 'soft'
 
@@ -240,7 +258,7 @@ The new mode will go into effect once the command is called.
 
 ## Known Issues
 
- - Calling setup with `{ paths = { all = '*' }}` will cause slight lag.
+ - None. Find something? Open an issue.
 
 ## Donation
 
