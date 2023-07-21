@@ -190,7 +190,7 @@ end
 ---Sets up conceals for environment variables
 M.setup_env_conceals = function()
   for name, path in pairs(M.paths) do
-    vim.api.nvim_create_autocmd({ 'BufRead', 'BufWinEnter' }, {
+    vim.api.nvim_create_autocmd({ 'BufRead' }, {
       pattern = path,
       callback = function()
         table.insert(
@@ -210,7 +210,7 @@ end
 ---Sets up conceals for .gitconfig, with the given '*/path/*'
 ---@param path string
 M.setup_git_conceals = function(path)
-  vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' }, {
+  vim.api.nvim_create_autocmd({ 'BufRead' }, {
     pattern = path,
     callback = function()
       table.insert(
