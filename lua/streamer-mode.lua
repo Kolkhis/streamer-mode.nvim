@@ -18,7 +18,7 @@ M.paths = {
 M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
 M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
 M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
-M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=\S*]]
+M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=.*$]]
 
 
 -- Git
@@ -38,7 +38,6 @@ M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
 M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 
--- envs -> gitUserName -- Don't use. Slow.
 M._MasterConcealPattern =
   [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$\|\(TOKEN\s\{-\}\)\@<=.*$\|\(API_KEY\s\{-\}\)\@<=.*$\|\(credential.helper\s\{-\}\)\@<=.*$\|\(user.name\s\{-\}\)\@<=.*$]]
 -- SSH IdentityFile, Hostname and GitUserPasswordConcealPattern
@@ -58,7 +57,7 @@ M._ConcealPatterns = {
   M._GitNameConcealPattern,
   M._HostNameConcealPattern,
   M._EnvConcealPattern,
-	M._IdentityFileConcealPattern,
+  M._IdentityFileConcealPattern,
 }
 
 -- TODO: Make a dictionary for user choice on what keywords to filter.
