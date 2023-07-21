@@ -58,6 +58,7 @@ M._ConcealPatterns = {
   M._GitNameConcealPattern,
   M._HostNameConcealPattern,
   M._EnvConcealPattern,
+	M._IdentityFileConcealPattern,
 }
 
 -- TODO: Make a dictionary for user choice on what keywords to filter.
