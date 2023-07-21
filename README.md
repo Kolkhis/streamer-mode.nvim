@@ -87,11 +87,10 @@ require('streamer-mode').setup({ default_state = 'off' })
 
 
 
-If you want to customize (`exclude`, `level`, and `default_state`):
+If you want to customize ( `level` and `default_state`):
 ```lua
 require('streamer-mode').setup({
   level = 'secure',
-  exclude = { 'bash_aliases', 'powershell' },
   default_state = 'off'
 })
 ```
@@ -152,7 +151,6 @@ require('streamer-mode').setup({
   conceal_char = '*'  -- Default. This is what will be displayed instead
                       -- of your secrets.
 
-  exclude = { '' }  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
 })
 
 ```
@@ -171,8 +169,6 @@ See more about the different levels below.
 * `default_state`: Whether or not Streamer Mode will be active 
 when you first launch a Neovim session. Leaving it `'on'` (default)
 is recommended.
-* `exclude`: List-like table of strings. Only necessary if you want to use the 
-some of the defaults, but not all of them.
 * `conceal_char`: String. This is the character that will be displayed in place of your hidden text.
 
 

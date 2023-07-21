@@ -18,17 +18,22 @@ Intro
 								    *sm.setup*
 streamer-mode.setup({opts})                         
     Setup function to be run by user. Configures the defaults, pickers and
-    extensions of telescope.
+    extensions of telescope. 
 
     Usage: ~
     >
+    Defaults can be used by calling like:
+    
+        require('streamer-mode').setup({ preset = true })
 
+    To set up a custom config:
     require('streamer-mode').setup{
-      paths = {
-        -- Default configuration can be used by calling this with an empty
-	-- table.
+	paths = {
         -- name = '*/path/*',
-        -- Defaults:
+        -- Default:
+	all = '*'
+
+	-- To add custom paths instead of using all paths/files:
         venv = '*/venv/*',
         virtualenv = '*/virtualenv/*',
         dotenv = '*/.env',
@@ -38,11 +43,9 @@ streamer-mode.setup({opts})
         nodotdot = '*/dotfiles/*',
         powershell = '*.ps1',
         gitconfig = '*/.gitconfig',
+	-- Use any name, only the paths will be used.
       },
 
-      -- Exclude any options from the default config above by passing their
-      -- names in a list, as a string:
-      exclude = { 'nodotdot', 'powershell' }  -- NOTE: this must be a { list }
 
       level = 'secure', -- | 'edit' | 'soft' (see more info below)
 
