@@ -47,6 +47,10 @@ M._HostNameConcealPattern = [[\([Hh]ostname\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 
+-- .ini
+M._ServerIPConcealPattern = [[\([Ss]erver\s\{-\}\)\@<=.*$]]
+M._PortConcealPattern = [[\([Pp]ort\s\{-\}\)\@<=.*$]]
+
 
 -- Compounded (Avoid these)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
@@ -71,14 +75,12 @@ M._ConcealPatterns = {
   M._HostNameConcealPattern,
   M._IdentityFileConcealPattern,
   M._OpenSSHPrivateKeyConcealPattern,
+  M._ServerIPConcealPattern,
+  M._PortConcealPattern,
 }
 
 --[==[ IN PROGRESS ]==]--
 --[=[--
-
-M._OpenSSHPrivateKeyConcealPattern = [[\(\(BEGIN\)\?\(OPENSSH\)\? PRIVATE KEY\s\{-\}\)\@<=.*$]]
-OPENSSH PRIVATE KEY = 'asdfasdfasdf'
-
 M._opts.hide = {
 	export = true,
 	alias = true,
@@ -94,6 +96,8 @@ M._opts.hide = {
 	identity_file = true,
 	host_name = true,
 }
+
+
 
 --]=]-- [=[ More Regex coming! ]=]
 
