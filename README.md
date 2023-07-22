@@ -85,14 +85,14 @@ streamer-mode.nvim applies filters to the most files that will contain sensitive
 ```lua
 require('streamer-mode')
 ```  
-  
+Then just call `:StreamerMode` (or `:SM`) and Streamer Mode will be active.
   
 
-Streamer Mode is enabled by default, which means it will turn on when Neovim is launched.  
-To disable this behavior:
+Streamer Mode is disabled by default, which means it won't turn on when Neovim is launched.  
+To enable Streamer Mode on launch:
 
 ```lua
-require('streamer-mode').setup({ default_state = 'off' })
+require('streamer-mode').setup({ default_state = 'on' })
 ```  
   
 
@@ -108,21 +108,14 @@ require('streamer-mode').setup({
 ```  
   
   
-It's also possible to use default settings and only change `default_state`, `conceal_char`, and/or `level`.
-Here's an example that sets `default_state` to 'off', so `:SM` must be run to start
-Streamer Mode:
 
-```lua
-require('streamer-mode').setup({ default_state = 'off' })
-```  
-  
-
-If you want to customize (`exclude`, `level`, and `default_state`):
+If you want to customize (`conceal_char`, `exclude`, `level`, and `default_state`):
 ```lua
 require('streamer-mode').setup({
   level = 'secure',
   exclude = { 'bash_aliases', 'powershell' },
-  default_state = 'off'
+  default_state = 'off',
+  conceal_char = 'X'
 })
 ```  
   
@@ -152,8 +145,9 @@ require('streamer-mode').setup({
     gitconfig = '*/.gitconfig',
   },
   level = 'edit', -- | 'secure' | 'soft'
-  default_state = 'off', -- | 'on'
-  exclude = {'powershell', }
+  default_state = 'on', -- | 'off'
+  exclude = {'powershell' },
+  conceal_char = 'X'
 })
 ```
 
@@ -188,7 +182,7 @@ require('streamer-mode').setup({
     ssh = '*/.ssh/*',
     }
   },
-  level = 'edit', -- | 'secure' | 'soft'
+  level = 'secure', -- | 'edit' | 'soft'
 
   default_state = 'off',  -- Whether or not streamer mode turns on when nvim is launched.
 
