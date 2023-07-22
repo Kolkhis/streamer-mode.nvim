@@ -82,39 +82,38 @@ M._ConcealPatterns = {
 M._opts.patterns = M._ConcealPatterns
 
 M._opts.conceal_dict = {
-    export = M._opts.patterns._BashEnvConcealPattern,
-    alias = M._opts.patterns._BashAliasConcealPattern,
-    powershell = M._opts.patterns._PowerShellEnvConcealPattern,
-    git_name = M._opts.patterns._GitNameConcealPattern,
-	git_username = M._opts.patterns._GitUserNameConcealPattern,
-	git_userpassword = M._opts.patterns._GitUserPasswordConcealPattern,
-	git_email = M._opts.patterns._GitEmailConcealPattern,
-	git_signingkey = M._opts.patterns._GitSigningKeyConcelPattern,
-	api_key = M._opts.patterns._APIKeyConcealPattern,
-	token = M._opts.patterns._TOKENConcealPattern,
-	identity_file = M._opts.patterns._IdentityFileConcealPattern,
-	host_name = M._opts.patterns._HostNameConcealPattern,
-    server = M._opts.patterns._ServerIPConcealPattern,
-    port = M._opts.patterns._PortConcealPattern,
-    credential_helper = M._opts.patterns._GitCredentialConcealPattern,
+  export = M._opts.patterns._BashEnvConcealPattern,
+  alias = M._opts.patterns._BashAliasConcealPattern,
+  powershell = M._opts.patterns._PowerShellEnvConcealPattern,
+  git_name = M._opts.patterns._GitNameConcealPattern,
+  git_username = M._opts.patterns._GitUserNameConcealPattern,
+  git_userpassword = M._opts.patterns._GitUserPasswordConcealPattern,
+  git_email = M._opts.patterns._GitEmailConcealPattern,
+  git_signingkey = M._opts.patterns._GitSigningKeyConcelPattern,
+  api_key = M._opts.patterns._APIKeyConcealPattern,
+  token = M._opts.patterns._TOKENConcealPattern,
+  identity_file = M._opts.patterns._IdentityFileConcealPattern,
+  host_name = M._opts.patterns._HostNameConcealPattern,
+  server = M._opts.patterns._ServerIPConcealPattern,
+  port = M._opts.patterns._PortConcealPattern,
+  credential_helper = M._opts.patterns._GitCredentialConcealPattern,
 }
 
 M._opts.hide = {
-	export = true,
-	alias = true,
-	env = true,
-	powershell = true,
-	git_name = true,
-	git_username = true,
-	git_userpassword = true,
-	git_email = true,
-	git_signingkey = true,
-	api_key = true,
-	token = true,
-	identity_file = true,
-	host_name = true,
+  export = true,
+  alias = true,
+  env = true,
+  powershell = true,
+  git_name = true,
+  git_username = true,
+  git_userpassword = true,
+  git_email = true,
+  git_signingkey = true,
+  api_key = true,
+  token = true,
+  identity_file = true,
+  host_name = true,
 }
-
 
 --[==[ IN PROGRESS ]==]
 --
@@ -124,8 +123,6 @@ M._opts.hide = {
 
 --]=]
 -- [=[ More Regex coming! ]=]
-
-
 
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
