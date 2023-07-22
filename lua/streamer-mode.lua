@@ -132,38 +132,47 @@ M._cursor_levels = {
   soft = '',
 }
 
--- Can be called { preset = true } to use the defaults.
--- Parameters: ~
---   • {opts}  Table of named paths
---        • paths = { any_name = '*/path/*' }
---        • level = 'secure' -- or: 'soft', 'edit'
---        • exclude = { 'default', 'path', 'names' }
---        • conceal_char = '*' -- default
---        • default_state = 'on' -- or 'off'
---
---        • levels:
---
---             • 'secure' will disable the text becoming visible until
---               the `level` changes. (:h streamer-mode.command)
---               You can also type out new exports (or other environment
---               variables) and the text will not be shown.
---               Like sudo password input.
---
---             • 'edit' will enable the text to become visible when the
---                cursor goes into insert mode on the same line.
---
---             • `'soft'` means the text will become visible when the cursor is
---               on the same line.
---
--- example:
---	 • require('streamer-mode').setup({
---	     paths = { name = '*/path/*' },
---	     level = 'edit',
---	     exclude = 'powershell'
---	   })
---
--- :h streamer-mode.setup
----@param opts? table
+--- Setup function for the user. Configures default behavior.
+--- Usage:
+--- <code>
+---	  require('streamer-mode').setup({
+---      -- Use all the default paths
+---      preset = true,
+---      -- Add more paths
+---      paths = { project_dir = '~/projects/*' },
+---      -- Set Streamer Mode to be active when nvim is launched
+---	     default_mode = 'on',
+---      -- Set Streamer Mode behavior. :h sm.level
+---	     level = 'edit',
+---      -- A listlike table of default paths to exlude
+---	     exclude = { 'powershell' }
+---	   })
+--- </code>
+---
+--- Parameters: ~
+---   • {opts}  Table of named paths
+---        • paths: table = { any_name = '*/path/*' }
+---        • level: string = 'secure' -- or: 'soft', 'edit'
+---        • exclude: table = { 'default', 'path', 'names' }
+---        • conceal_char: string = '*' -- default
+---        • default_state: string = 'on' -- or 'off'
+---
+---        • levels:
+---
+---             • 'secure' will disable the text becoming visible until
+---               the `level` changes. (:h streamer-mode.command)
+---               You can also type out new exports (or other environment
+---               variables) and the text will not be shown.
+---               Like sudo password input.
+---
+---             • 'edit' will enable the text to become visible when the
+---                cursor goes into insert mode on the same line.
+---
+---             • `'soft'` means the text will become visible when the cursor is
+---               on the same line.
+---
+--- :h streamer-mode.setup
+---@param opts? table: paths: table, exclude: table, default_mode: string, conceal_char: string, level: string
 function M.setup(opts)
   -- Gather initial options from setup to use throughout
   if opts then
@@ -179,11 +188,6 @@ function M.setup(opts)
   end
   if opts.preset then
     M._opts = M.preset_opts
-  end
-  if opts.paths then
-    for name, path in pairs(opts.paths) do
-      M._opts[name] = path
-    end
   end
   if M._opts.paths then
     for name, path in pairs(M._opts.paths) do
@@ -203,7 +207,6 @@ function M.setup(opts)
   M._opts.default_state = opts.default_state or M._opts.default_state
   if M._opts.default_state == 'on' then
     M:start_streamer_mode()
-    M._opts.default_state = 'on'
   end
 end
 
@@ -214,17 +217,17 @@ end
 --	   add_path('bashrc', '*/.bashrc')
 ---@param name string
 ---@param path string
-M.add_path = function(name, path)
+function M:add_path(name, path)
   if path:match('~') then
     path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize
   end
-  M._opts.paths[name] = path
+  self._opts.paths[name] = path
 end
 
 ---Callback for autocmds.
 function M:add_match_conceals()
   for i, conc in ipairs(M._ConcealPatterns) do
-    table.insert(M._matches, vim.fn.matchadd('Conceal', conc, 9999, -1, { conceal = M._opts.conceal_char }))
+    table.insert(self._matches, vim.fn.matchadd('Conceal', conc, 9999, -1, { conceal = self._opts.conceal_char }))
   end
 end
 
@@ -232,18 +235,18 @@ end
 function M:start_streamer_mode()
   vim.fn.clearmatches()
   self._matches = {}
-  M:add_match_conceals()
-  M:setup_env_conceals()
+  self:add_match_conceals()
+  self:setup_env_conceals()
 end
 
 ---Stops Streamer Mode. Alias for `remove_conceals()`
 function M:stop_streamer_mode()
-  M:remove_conceals()
+  self:remove_conceals()
 end
 
 --- Turns off Streamer Mode (Removes Conceal commands)
 function M:remove_conceals()
-  vim.api.nvim_clear_autocmds({ group = 'StreamerMode' })
+  vim.api.nvim_clear_autocmds({ group = self.conceal_augroup })
   vim.fn.clearmatches()
   self._matches = {}
   vim.o.conceallevel = 0
@@ -251,13 +254,13 @@ end
 
 ---Sets up conceals for environment variables
 function M:setup_env_conceals()
-  for name, path in pairs(M._opts.paths) do
+  for name, path in pairs(self._opts.paths) do
     vim.api.nvim_create_autocmd({ 'BufRead' }, {
       pattern = path,
       callback = function()
-        M:add_match_conceals()
+        self:add_match_conceals()
       end,
-      group = M._conceal_augroup,
+      group = self._conceal_augroup,
     })
   end
 end
