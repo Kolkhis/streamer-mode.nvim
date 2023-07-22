@@ -1,4 +1,31 @@
 M = {}
+
+-- Set up default paths.
+M.preset_opts = {
+  paths = {
+    -- The names are unimportant, only the paths matter.
+    -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
+    venv = '*/venv/*',
+    virtualenv = '*/virtualenv/*',
+    dotenv = '*/.env',
+    config = '*/.config/*',
+    aliases = '*/.bash_aliases',
+    dotfiles = '*/dotfiles/*',
+    powershell = '*.ps1',
+    gitconfig = '*/.gitconfig',
+    configini = '*.ini',
+    secretsyaml = '*.yaml',
+    ssh = '*/.ssh/*',
+  },
+  level = 'secure', -- | 'edit' | 'soft'
+  default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
+  exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
+  conceal_char = '*',
+  patterns = M._ConcealPatterns,
+}
+
+M._opts = M.preset_opts
+
 -- regex lol.
 M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
 M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
@@ -21,8 +48,8 @@ M._HostNameConcealPattern = [[\([Hh]ostname\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- .ini
-M._ServerIPConcealPattern = [[\([Ss]erver\s\{-\}\)\@<=.*$]]
-M._PortConcealPattern = [[\([Pp]ort\s\{-\}\)\@<=.*$]]
+M._ServerIPConcealPattern = [[\(server\s\{-\}\)\@<=.*$]]
+M._PortConcealPattern = [[\(port\s\{-\}\)\@<=.*$]]
 
 -- Compounded (Avoid these)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
@@ -88,32 +115,6 @@ M._opts.hide = {
 	host_name = true,
 }
 
-
--- Set up default paths.
-M.preset_opts = {
-  paths = {
-    -- The names are unimportant, only the paths matter.
-    -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
-    configini = '*.ini',
-    secretsyaml = '*.yaml',
-    ssh = '*/.ssh/*',
-  },
-  level = 'secure', -- | 'edit' | 'soft'
-  default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
-  exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
-  conceal_char = '*',
-  patterns = M._ConcealPatterns,
-}
-
-M._opts = M.preset_opts
 
 --[==[ IN PROGRESS ]==]
 --
