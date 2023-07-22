@@ -162,8 +162,10 @@ function M.setup(opts)
       M._opts[name] = path
     end
   end
-  for name, path in pairs(M._opts.paths) do
-    M._opts.paths[name] = vim.fs.normalize(path, { expand_env = true })
+  if M._opts.paths then
+    for name, path in pairs(M._opts.paths) do
+      M._opts.paths[name] = vim.fs.normalize(path, { expand_env = true })
+    end
   end
   -- Remove any unwanted paths
   if opts.exclude then
