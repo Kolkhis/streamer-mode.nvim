@@ -31,22 +31,23 @@ streamer-mode.setup({opts})
 	paths = {
         -- name = '*/path/*',
         -- Default:
-        venv = '*/venv/*',
-        virtualenv = '*/virtualenv/*',
-        dotenv = '*/.env',
-        config = '*/.config/*',
-        aliases = '*/.bash_aliases',
-        dotfiles = '*/.dotfiles/*',
-        nodotdot = '*/dotfiles/*',
-        powershell = '*.ps1',
-        gitconfig = '*/.gitconfig',
+    venv = '*/venv/*',
+    virtualenv = '*/virtualenv/*',
+    dotenv = '*/.env',
+    config = '*/.config/*',
+    aliases = '*/.bash_aliases',
+    dotfiles = '*/dotfiles/*',
+    powershell = '*.ps1',
+    gitconfig = '*/.gitconfig',
+    configini = '*/*.ini',
+    yaml_secrets = '*/*.yaml',
 	-- Use any name, only the paths will be used.
       },
 
 
       level = 'secure', -- | 'edit' | 'soft' (see more info below)
 
-      default_state = 'on',  -- | 'off' : Whether or not streamer mode turns
+      default_state = 'off',  -- | 'on' : Whether or not streamer mode turns
                              --           on when nvim is launched.
 
       conceal_char = '*'  -- Default. This is what will be displayed instead
@@ -178,4 +179,4 @@ your buffer. See |stremer-mode.level|
 
 
 
-vim:tw=78:ts=8:ft=help:norl:
+vim:tw=78:ts=8:noet:ft=help:norl:

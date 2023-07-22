@@ -35,7 +35,7 @@ Jump to
 * `user.name` 
 * `user.email`
 * `user.password`
-* `API_KEY` `
+* `API_KEY`
 * `TOKEN` 
 * `credential.helper`
 * `server`
@@ -183,13 +183,14 @@ require('streamer-mode').setup({
     dotfiles = '*/dotfiles/*',
     powershell = '*.ps1',
     gitconfig = '*/.gitconfig',
-    configini = '*/*.ini',
-    yaml_secrets = '*/*.yaml',
+    configini = '*.ini',
+    secretsyaml = '*.yaml',
+    ssh = '*/.ssh/*',
     }
   },
   level = 'edit', -- | 'secure' | 'soft'
 
-  default_state = 'on',  -- Whether or not streamer mode turns on when nvim is launched.
+  default_state = 'off',  -- Whether or not streamer mode turns on when nvim is launched.
 
   conceal_char = '*'  -- Default. This is what will be displayed instead
                       -- of your secrets.
@@ -272,6 +273,13 @@ The new mode will go into effect once the command is called.
 
 - `:StreamerModeSoft` (or `:SMsoft`) - Starts streamer mode with 'soft' level enabled.  
   
+
+Streamer Mode will be off be default. To turn it on, call `:SM`, or `:SM(level)`.
+Here's an example of binding it to a key:
+```lua
+vim.keymap.set('n', '<leader>sm', '<cmd>SM<CR>', { silent = true })
+```
+
 
 
 ## Currently Working On

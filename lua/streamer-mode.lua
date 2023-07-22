@@ -1,30 +1,4 @@
 M = {}
--- Set up default paths.
-M.preset_opts = {
-  paths = {
-    -- The names are unimportant, only the paths matter.
-    -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
-    configini = '*/*.ini',
-    secretsyaml = '*/*.yaml',
-    ssh = '*/.ssh/*',
-  },
-  level = 'secure', -- | 'edit' | 'soft'
-  default_state = 'on', -- Whether or not streamer mode turns on when nvim is launched.
-  exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
-  conceal_char = '*',
-  patterns = M._ConcealPatterns,
-}
-
-M._opts = M.preset_opts
-
 -- regex lol.
 M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
 M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
@@ -64,6 +38,7 @@ M._ConcealPatterns = {
   M._TOKENConcealPattern,
   M._PowerShellEnvConcealPattern,
   M._BashEnvConcealPattern,
+  M._BashAliasConcealPattern,
   M._GitUserNameConcealPattern,
   M._GitUserPasswordConcealPattern,
   M._GitCredentialConcealPattern,
@@ -72,14 +47,31 @@ M._ConcealPatterns = {
   M._GitNameConcealPattern,
   M._HostNameConcealPattern,
   M._IdentityFileConcealPattern,
-  M._OpenSSHPrivateKeyConcealPattern,
   M._ServerIPConcealPattern,
   M._PortConcealPattern,
+  -- Not in use
+  M._OpenSSHPrivateKeyConcealPattern,
+}
+M._opts.patterns = M._ConcealPatterns
+
+M._opts.conceal_dict = {
+    export = M._opts.patterns._BashEnvConcealPattern,
+    alias = M._opts.patterns._BashAliasConcealPattern,
+    powershell = M._opts.patterns._PowerShellEnvConcealPattern,
+    git_name = M._opts.patterns._GitNameConcealPattern,
+	git_username = M._opts.patterns._GitUserNameConcealPattern,
+	git_userpassword = M._opts.patterns._GitUserPasswordConcealPattern,
+	git_email = M._opts.patterns._GitEmailConcealPattern,
+	git_signingkey = M._opts.patterns._GitSigningKeyConcelPattern,
+	api_key = M._opts.patterns._APIKeyConcealPattern,
+	token = M._opts.patterns._TOKENConcealPattern,
+	identity_file = M._opts.patterns._IdentityFileConcealPattern,
+	host_name = M._opts.patterns._HostNameConcealPattern,
+    server = M._opts.patterns._ServerIPConcealPattern,
+    port = M._opts.patterns._PortConcealPattern,
+    credential_helper = M._opts.patterns._GitCredentialConcealPattern,
 }
 
---[==[ IN PROGRESS ]==]
---
---[=[--
 M._opts.hide = {
 	export = true,
 	alias = true,
@@ -97,9 +89,42 @@ M._opts.hide = {
 }
 
 
+-- Set up default paths.
+M.preset_opts = {
+  paths = {
+    -- The names are unimportant, only the paths matter.
+    -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
+    venv = '*/venv/*',
+    virtualenv = '*/virtualenv/*',
+    dotenv = '*/.env',
+    config = '*/.config/*',
+    aliases = '*/.bash_aliases',
+    dotfiles = '*/dotfiles/*',
+    powershell = '*.ps1',
+    gitconfig = '*/.gitconfig',
+    configini = '*.ini',
+    secretsyaml = '*.yaml',
+    ssh = '*/.ssh/*',
+  },
+  level = 'secure', -- | 'edit' | 'soft'
+  default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
+  exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
+  conceal_char = '*',
+  patterns = M._ConcealPatterns,
+}
+
+M._opts = M.preset_opts
+
+--[==[ IN PROGRESS ]==]
+--
+--[=[--
+
+
 
 --]=]
 -- [=[ More Regex coming! ]=]
+
+
 
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
