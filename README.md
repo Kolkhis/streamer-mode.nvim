@@ -23,7 +23,26 @@ Jump to
 
 ### Current Features
 
-- Currently supports the concealment of `export`, `$env:`, `name`, `email`, `signingkey`, `Hostname`, `IdentityFile`, `user.name`, `user.email`, `user.password`, `API_KEY`, `TOKEN`, and `credential.helper`. Open an issue to request more!
+- Currently supports the concealment of:
+
+* `export`
+* `$env:`
+* `name`
+* `email`
+* `signingkey`
+* `Hostname`
+* `IdentityFile`
+* `user.name` 
+* `user.email`
+* `user.password`
+* `API_KEY` `
+* `TOKEN` 
+* `credential.helper`
+* `server`
+* `port`  
+
+
+ Open an issue to request more!
 
 - Hides environment variables and sensitive `.gitconfig` information.
 
@@ -77,7 +96,7 @@ require('streamer-mode').setup({ default_state = 'off' })
 ```  
   
 
-To use [defaults](#default-settings) as well as your own paths:
+To use [defaults](#default-settings) in addition to your own paths/filetypes:
 
 ```lua
 require('streamer-mode').setup({
@@ -109,9 +128,10 @@ require('streamer-mode').setup({
   
   
 
-If you want to use custom paths or filetypes instead of applying the filter to all files, you can.
+If you want to use custom paths or filetypes instead of applying the filter to the defaults, you can.
 Just pass in the `paths` argument, along with your own paths in the format:
 `paths = { name = '*/path/* }`  
+
 
 Here's an example of a custom configuration:
 
@@ -138,7 +158,7 @@ require('streamer-mode').setup({
 ```
 
 While it is possible to enable Streamer Mode for all files, it's not recommended.
-It's possible for this to slow down Neovim. Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know).  
+It's possible for this to slow down your editor. Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know). 
   
 
 If you want to do this despite that, you've been warned:
