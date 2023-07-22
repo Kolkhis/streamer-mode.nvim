@@ -46,11 +46,9 @@ M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 M._HostNameConcealPattern = [[\([Hh]ostname\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
-
 -- .ini
 M._ServerIPConcealPattern = [[\([Ss]erver\s\{-\}\)\@<=.*$]]
 M._PortConcealPattern = [[\([Pp]ort\s\{-\}\)\@<=.*$]]
-
 
 -- Compounded (Avoid these)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
@@ -79,7 +77,8 @@ M._ConcealPatterns = {
   M._PortConcealPattern,
 }
 
---[==[ IN PROGRESS ]==]--
+--[==[ IN PROGRESS ]==]
+--
 --[=[--
 M._opts.hide = {
 	export = true,
@@ -99,7 +98,8 @@ M._opts.hide = {
 
 
 
---]=]-- [=[ More Regex coming! ]=]
+--]=]
+-- [=[ More Regex coming! ]=]
 
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
