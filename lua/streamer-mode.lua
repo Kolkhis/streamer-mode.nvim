@@ -163,12 +163,12 @@ function M.setup(opts)
     end
   end
   for name, path in pairs(M._opts.paths) do
-    M.paths[name] = vim.fs.normalize(path, { expand_env = true })
+    M._opts.paths[name] = vim.fs.normalize(path, { expand_env = true })
   end
   -- Remove any unwanted paths
   if opts.exclude then
     for i, name in ipairs(opts['exclude']) do
-      M.paths[name] = nil
+      M._opts.paths[name] = nil
     end
   end
   -- set conceal character
@@ -193,7 +193,7 @@ M.add_path = function(name, path)
   if path:match('~') then
     path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize
   end
-  M.paths[name] = path
+  M._opts.paths[name] = path
 end
 
 ---Callback for autocmds.
@@ -226,7 +226,7 @@ end
 
 ---Sets up conceals for environment variables
 function M:setup_env_conceals()
-  for name, path in pairs(M.paths) do
+  for name, path in pairs(M._opts.paths) do
     vim.api.nvim_create_autocmd({ 'BufRead' }, {
       pattern = path,
       callback = function()
@@ -238,7 +238,7 @@ function M:setup_env_conceals()
 end
 
 vim.api.nvim_create_user_command('StreamerMode', function()
-  M.setup({ paths = M.paths, default_state = 'on', level = M._opts.level })
+  M.setup({ paths = M._opts.paths, default_state = 'on', level = M._opts.level })
 end, { desc = 'Starts streamer mode.' })
 
 vim.api.nvim_create_user_command('StreamerModeOff', function()
