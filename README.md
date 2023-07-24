@@ -26,11 +26,13 @@ Jump to
 - Currently supports the concealment of:
 
 * `export`
+* `alias`
 * `$env:`
 * `name`
 * `email`
 * `signingkey`
 * `Hostname`
+* `host`
 * `IdentityFile`
 * `user.name` 
 * `user.email`

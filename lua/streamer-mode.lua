@@ -45,13 +45,14 @@ M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 
 -- SSH
 M._HostNameConcealPattern = [[\([Hh]ostname\s\{-\}\)\@<=.*$]]
+M._HostConcealPattern = [[\([Hh]ost\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- .ini
 M._ServerIPConcealPattern = [[\(server\s\{-\}\)\@<=.*$]]
 M._PortConcealPattern = [[\(port\s\{-\}\)\@<=.*$]]
 
--- Compounded (Avoid these)
+-- Compounded (Avoid these. Slow.)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
 M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
 M._MasterConcealPattern =
@@ -78,9 +79,11 @@ M._ConcealPatterns = {
   M._PortConcealPattern,
   -- Not in use
   M._OpenSSHPrivateKeyConcealPattern,
+  M._HostConcealPattern,
 }
 M._opts.patterns = M._ConcealPatterns
 
+-- Will eventually be used for keyword customization
 M._opts.conceal_dict = {
   export = M._opts.patterns._BashEnvConcealPattern,
   alias = M._opts.patterns._BashAliasConcealPattern,
