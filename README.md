@@ -7,11 +7,16 @@ variables and other sensitive information.
 
 ![Streamer-Mode Demo](https://github.com/Kolkhis/streamer-mode.nvim/assets/36500473/3fc1fc02-f4f4-4c6f-a5f7-bbc077f384fa)
 
-> Short demo of the basic modes.
+##### *Short demo of the basic modes.*
 
-If you find a bug, please let me know! I'll try to fix it as soon as I can.
+If you find a bug, please let me know! I'll try to fix it as soon as I can.  
 
-If anyone has any requests for new concealments, customizations, or other features, please don't hesitate to let me know. Just [open an issue!](https://github.com/Kolkhis/streamer-mode.nvim/issues) I'll add them!
+
+> ##### Side note: It's recommended that you find a more secure way to store VERY private information than in plain text environment variables. But sometimes it's just easier for a temporary solution.
+
+
+
+If anyone has any requests for new concealments, customizations, or other features, please don't hesitate to let me know. Just [open an issue!](https://github.com/Kolkhis/streamer-mode.nvim/issues) I'll add them!  
 
 Jump to
 
@@ -19,11 +24,11 @@ Jump to
 - [Setup](#setup)
 - [Levels](#levels)
 - [Commands](#commands)
-- [Donation](#donation)
+- [Donation](#donation)  
 
 ### Current Features
 
-- Currently supports the concealment of:
+Currently supports the concealment of:
 
 * `export`
 * `alias`
@@ -83,7 +88,7 @@ Plug 'Kolkhis/streamer-mode.nvim'
 After installing, just `require('streamer-mode')` in your `init.lua` and you're set to go!
 streamer-mode.nvim applies filters to the most files that will contain sensitive information by default. Check the [default settings](#default-settings)  
 
-##### Default setup:
+#### Default setup:
 ```lua
 require('streamer-mode')
 ```  
@@ -96,7 +101,15 @@ To enable Streamer Mode on launch:
 ```lua
 require('streamer-mode').setup({ default_state = 'on' })
 ```  
-  
+Now Streamer Mode will be active every time a new Neovim session is launched!
+    
+ <br /> 
+
+#### Advanced Setup:
+
+
+##### These are just examples. To jump to all configuration options, click [here.](#Parameters)
+
 
 To use [defaults](#default-settings) in addition to your own paths/filetypes:
 
@@ -108,7 +121,7 @@ require('streamer-mode').setup({
   },
 })
 ```  
-  
+ <br /> 
   
 
 If you want to customize (`conceal_char`, `exclude`, `level`, and `default_state`):
@@ -120,7 +133,7 @@ require('streamer-mode').setup({
   conceal_char = 'X'
 })
 ```  
-  
+ <br /> 
   
 
 If you want to use custom paths or filetypes instead of applying the filter to the defaults, you can.
@@ -140,24 +153,26 @@ require('streamer-mode').setup({
     virtualenv = '*/virtualenv/*',
     dotenv = '*/.env',
     config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/.dotfiles/*',
+    aliases = '~/.bash_aliases',
+    dotfiles = '~/.dotfiles/*',
     nodotdot = '*/dotfiles/*',
     powershell = '*.ps1',
     gitconfig = '*/.gitconfig',
   },
   level = 'edit', -- | 'secure' | 'soft'
   default_state = 'on', -- | 'off'
-  exclude = {'powershell' },
-  conceal_char = 'X'
+  exclude = { 'powershell' },
+  conceal_char = 'X' -- Can be any character
 })
 ```
+ <br /> 
 
 While it is possible to enable Streamer Mode for all files, it's not recommended.
-It's possible for this to slow down your editor. Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know). 
+It's possible for this to slow down your editor. 
+Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know). 
   
 
-If you want to do this despite that, you've been warned:
+If you want to do this despite that, here's how:
 ```lua
 require('streamer-mode').setup({ paths = { all = '*' } })
 ```  
@@ -220,6 +235,7 @@ require('streamer-mode').setup({
 
 ```lua
 require('streamer-mode').setup({
+  preset = true,
   paths = {
     shell_scripts = '*.sh',
     my_config = '*/.myconf/*',
@@ -281,6 +297,8 @@ vim.keymap.set('n', '<leader>sm', '<cmd>SM<CR>', { silent = true })
 ## Currently Working On
 
 - [ ] User customization of which keywords they'd like to filter.  
+- [ ] Make `:SM` command a toggle - enable a single hotkey to turn StreamerMode both on and off. (or
+  make a separate command, `:SMToggle`)
   
 
 ## Known Issues

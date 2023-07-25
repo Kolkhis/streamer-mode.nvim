@@ -184,13 +184,18 @@ function M.setup(opts)
     M._opts.exclude = opts.exclude or M._opts.exclude
     M._opts.conceal_char = opts.conceal_char or M._opts.conceal_char
     M._opts.default_state = opts.default_state or M._opts.default_state
-    -- TODO: Add kwargs for words to conceal: 'export', 'name', etc
+    -- TODO: Add kwargs for keywords to conceal: 'export', 'name', etc
     M._opts.patterns = opts.patterns or M._opts.patterns
   else
     opts = M._opts
   end
   if opts.preset then
-    M._opts = M.preset_opts
+    M._opts = M.preset_opts -- Catch if user chooses preset AND custom paths
+    if opts.paths then
+      for name, path in pairs(opts.paths) do
+        M._opts[name] = path
+      end
+    end
   end
   if M._opts.paths then
     for name, path in pairs(M._opts.paths) do
@@ -247,7 +252,7 @@ function M:stop_streamer_mode()
   self:remove_conceals()
 end
 
---- Turns off Streamer Mode (Removes Conceal commands)
+---Turns off Streamer Mode (Removes Conceal commands)
 function M:remove_conceals()
   vim.api.nvim_clear_autocmds({ group = self.conceal_augroup })
   vim.fn.clearmatches()
