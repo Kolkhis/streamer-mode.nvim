@@ -29,8 +29,8 @@ M._opts = M.preset_opts
 -- regex lol.
 M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
 -- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
-M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<-.*$]]
-M._ClientSecretConcealPattern = [[\([Cc][Ll][Ii][Ee][Nn][Tt]_\?[Ss][Ee][Cc][Rr][Ee][Tt]\s\{-\}\)\@<=.*$]]
+M._APIKeyConcealPattern = [[\([A\|a][P\|p][I\|i]_\?[K\|k][E\|e][Y\|y]\s\{-\}\)\@<-.*$]]
+M._ClientSecretConcealPattern = [[\([C\|c][L\|l][I\|i][E\|e][N\|n][T\|t]_\?[S\|s][E\|e][C\|c][R\|r][E\|e][T\|t]\s\{-\}\)\@<=.*$]]
 M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
 M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=.*$]]
