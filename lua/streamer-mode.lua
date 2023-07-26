@@ -28,7 +28,9 @@ M._opts = M.preset_opts
 
 -- regex lol.
 M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
-M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
+-- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
+M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<-.*$]]
+M._ClientSecretConcealPattern = [[\([Cc][Ll][Ii][Ee][Nn][Tt]_\?[Ss][Ee][Cc][Rr][Ee][Tt]\s\{-\}\)\@<=.*$]]
 M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
 M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=.*$]]
@@ -64,6 +66,7 @@ M._OverflowConcealPattern =
 M._ConcealPatterns = {
   M._APIKeyConcealPattern,
   M._TOKENConcealPattern,
+  M._ClientSecretConcealPattern,
   M._PowerShellEnvConcealPattern,
   M._BashEnvConcealPattern,
   M._BashAliasConcealPattern,
@@ -77,10 +80,30 @@ M._ConcealPatterns = {
   M._IdentityFileConcealPattern,
   M._ServerIPConcealPattern,
   M._PortConcealPattern,
-  -- Not in use
+  --
   M._OpenSSHPrivateKeyConcealPattern,
   M._HostConcealPattern,
 }
+
+M._opts.keywords = {
+  api_key = true,
+  token = true,
+  client_secret = true,
+  powershell = true,
+  env = true,
+  export = true,
+  alias = true,
+  git_name = true,
+  git_username = true,
+  git_userpassword = true,
+  git_email = true,
+  git_signingkey = true,
+  identity_file = true,
+  server = true,
+  port = true,
+  host_name = true,
+}
+
 M._opts.patterns = M._ConcealPatterns
 
 -- Will eventually be used for keyword customization
@@ -100,22 +123,6 @@ M._opts.conceal_dict = {
   server = M._opts.patterns._ServerIPConcealPattern,
   port = M._opts.patterns._PortConcealPattern,
   credential_helper = M._opts.patterns._GitCredentialConcealPattern,
-}
-
-M._opts.hide = {
-  export = true,
-  alias = true,
-  env = true,
-  powershell = true,
-  git_name = true,
-  git_username = true,
-  git_userpassword = true,
-  git_email = true,
-  git_signingkey = true,
-  api_key = true,
-  token = true,
-  identity_file = true,
-  host_name = true,
 }
 
 --[==[ IN PROGRESS ]==]
@@ -215,6 +222,8 @@ function M.setup(opts)
   M._opts.default_state = opts.default_state or M._opts.default_state
   if M._opts.default_state == 'on' then
     M:start_streamer_mode()
+  else
+    vim.o.conceallevel = 0
   end
 end
 
