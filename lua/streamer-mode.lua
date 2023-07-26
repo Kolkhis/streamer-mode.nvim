@@ -29,7 +29,7 @@ M._opts = M.preset_opts
 -- regex lol.
 M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
 -- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
-M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<-.*$]]
+M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<=.*$]]
 M._ClientSecretConcealPattern = [[\([Cc][Ll][Ii][Ee][Nn][Tt]_\?[Ss][Ee][Cc][Rr][Ee][Tt]\s\{-\}\)\@<=.*$]]
 M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
 M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
