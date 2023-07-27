@@ -47,7 +47,7 @@ M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 
 -- SSH
 M._HostNameConcealPattern = [[\([Hh]ostname\s\{-\}\)\@<=.*$]]
-M._HostConcealPattern = [[\([Hh]ost\s\{-\}\)\@<=.*$]]
+M._HostConcealPattern = [[\([Hh][Oo][Ss][Tt]\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- .ini
