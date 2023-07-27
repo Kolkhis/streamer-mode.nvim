@@ -77,6 +77,7 @@ M._ConcealPatterns = {
   M._GitEmailConcealPattern,
   M._GitNameConcealPattern,
   M._HostNameConcealPattern,
+  M._HostConcealPattern,
   M._IdentityFileConcealPattern,
   M._ServerIPConcealPattern,
   M._PortConcealPattern,
