@@ -31,28 +31,28 @@ M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
 -- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
 M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<=.*$]]
 M._ClientSecretConcealPattern = [[\([Cc][Ll][Ii][Ee][Nn][Tt]_\?[Ss][Ee][Cc][Rr][Ee][Tt]\s\{-\}\)\@<=.*$]]
-M._TOKENConcealPattern = [[\(TOKEN\s\{-\}\)\@<=.*$]]
+M._TOKENConcealPattern = [[\([Tt][Oo][Kk][Ee][Nn]\s\{-\}\)\@<=.*$]]
 M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=.*$]]
 M._BashAliasConcealPattern = [[\(alias \s\{-\}\)\@<=.*$]]
 
 -- Git
 M._GitSigningKeyConcelPattern = [[\(signingkey\s\{-\}\)\@<=.*$]]
-M._GitEmailConcealPattern = [[\(email\s\{-\}\)\@<=.*$]]
-M._GitNameConcealPattern = [[\(^[Nn]ame\s\{-\}\)\@<=.*$]]
+M._GitEmailConcealPattern = [[\([Ee][Mm][Aa][Ii][Ll]\s\{-\}\)\@<=.*$]]
+M._GitNameConcealPattern = [[\([Nn][Aa][Mm][Ee]\s\{-\}\)\@<=.*$]]
 -- Git Credentials
 M._GitCredentialConcealPattern = [[\(credential.helper\s\{-\}\)\@<=.*$]]
 M._GitUserNameConcealPattern = [[\(user.name\s\{-\}\)\@<=.*$]]
 M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 
 -- SSH
-M._HostNameConcealPattern = [[\([Hh]ostname\s\{-\}\)\@<=.*$]]
+M._HostNameConcealPattern = [[\([Hh][Oo][Ss][Tt][Nn][Aa][Mm][Ee]\s\{-\}\)\@<=.*$]]
 M._HostConcealPattern = [[\([Hh][Oo][Ss][Tt]\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- .ini
-M._ServerIPConcealPattern = [[\(server\s\{-\}\)\@<=.*$]]
-M._PortConcealPattern = [[\(port\s\{-\}\)\@<=.*$]]
+M._ServerIPConcealPattern = [[\([Ss][Ee][Rr][Vv][Ee][Rr]\s\{-\}\)\@<=.*$]]
+M._PortConcealPattern = [[\([Pp][Oo][Rr][Tt]\s\{-\}\)\@<=.*$]]
 
 -- Compounded (Avoid these. Slow.)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
