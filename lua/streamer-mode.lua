@@ -27,7 +27,7 @@ M.preset_opts = {
 M._opts = M.preset_opts
 
 -- regex lol.
-M._BaseConcealPattern = [[\(X\s\{-\}\)\@<=.*$]]
+M._BaseConcealPattern = [[\(%s\s\{-\}\)\@<=.*$]]
 -- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
 M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<=.*$]]
 M._ClientSecretConcealPattern = [[\([Cc][Ll][Ii][Ee][Nn][Tt]_\?[Ss][Ee][Cc][Rr][Ee][Tt]\s\{-\}\)\@<=.*$]]
@@ -107,7 +107,6 @@ M._opts.keywords = {
   port = true,
   host_name = true,
 }
-
 
 -- Will eventually be used for keyword customization
 M._opts.conceal_dict = {
@@ -200,6 +199,7 @@ function M.setup(opts)
   else
     opts = M._opts
   end
+
   if opts.preset then
     M._opts = M.preset_opts -- Catch if user chooses preset AND custom paths
     if opts.paths then
@@ -243,6 +243,19 @@ function M:add_path(name, path)
     path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize
   end
   self._opts.paths[name] = path
+end
+
+---Takes in a table in the format of { keyword = true }
+---Any keyword that is assigned a value of `true` will be added to
+---the conceal patterns.
+---@param keywords table
+function M:generate_pattern(keywords)
+  local words = keywords
+  for name, val in pairs(keywords) do
+    if val == 'true' then
+      M._ConcealPatterns[name] = M._BaseConcealPattern:format('name')
+    end
+  end
 end
 
 ---Callback for autocmds.
