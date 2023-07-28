@@ -83,8 +83,10 @@ M._ConcealPatterns = {
   M._PortConcealPattern,
   --
   M._OpenSSHPrivateKeyConcealPattern,
-  M._HostConcealPattern,
 }
+
+M._opts.patterns = M._ConcealPatterns
+--[==[ IN PROGRESS ]==]
 
 M._opts.keywords = {
   api_key = true,
@@ -101,11 +103,11 @@ M._opts.keywords = {
   git_signingkey = true,
   identity_file = true,
   server = true,
+  host = true,
   port = true,
   host_name = true,
 }
 
-M._opts.patterns = M._ConcealPatterns
 
 -- Will eventually be used for keyword customization
 M._opts.conceal_dict = {
@@ -118,15 +120,16 @@ M._opts.conceal_dict = {
   git_email = M._opts.patterns._GitEmailConcealPattern,
   git_signingkey = M._opts.patterns._GitSigningKeyConcelPattern,
   api_key = M._opts.patterns._APIKeyConcealPattern,
+  client_secret = M._opts.patterns._ClientSecretConcealPattern,
   token = M._opts.patterns._TOKENConcealPattern,
   identity_file = M._opts.patterns._IdentityFileConcealPattern,
   host_name = M._opts.patterns._HostNameConcealPattern,
+  host = M._opts.patterns._HostConcealPattern,
   server = M._opts.patterns._ServerIPConcealPattern,
   port = M._opts.patterns._PortConcealPattern,
   credential_helper = M._opts.patterns._GitCredentialConcealPattern,
 }
 
---[==[ IN PROGRESS ]==]
 --
 --[=[--
 
