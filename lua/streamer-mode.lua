@@ -52,8 +52,9 @@ M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- .ini
 M._ServerIPConcealPattern = [[\([Ss][Ee][Rr][Vv][Ee][Rr]\s\{-\}\)\@<=.*$]]
-M._PortConcealPattern = [[\([Pp][Oo][Rr][Tt]\s\{-\}\)\@<=.*$]]
-
+M._PortConcealPattern = [[\(port\|PORT\s\{-\}\)\@<=.*$]]
+-- PORT 
+-- port
 -- Compounded (Avoid these. Slow.)
 M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
 M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
