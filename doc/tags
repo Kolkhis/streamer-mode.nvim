@@ -11,12 +11,14 @@
 conceal_char	streamer-mode.txt	/*conceal_char*
 default_state	streamer-mode.txt	/*default_state*
 edit	streamer-mode.txt	/*edit*
+keywords	streamer-mode.txt	/*keywords*
 paths	streamer-mode.txt	/*paths*
 secure	streamer-mode.txt	/*secure*
 sm.command	streamer-mode.txt	/*sm.command*
 sm.conceal_char	streamer-mode.txt	/*sm.conceal_char*
 sm.default_state	streamer-mode.txt	/*sm.default_state*
 sm.edit	streamer-mode.txt	/*sm.edit*
+sm.keywords	streamer-mode.txt	/*sm.keywords*
 sm.levels	streamer-mode.txt	/*sm.levels*
 sm.paths	streamer-mode.txt	/*sm.paths*
 sm.secure	streamer-mode.txt	/*sm.secure*

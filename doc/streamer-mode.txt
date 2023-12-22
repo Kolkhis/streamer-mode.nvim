@@ -28,19 +28,38 @@ streamer-mode.setup({opts})
 
     To set up a custom config:
     require('streamer-mode').setup{
+	keywords = { 
+	    'api_key',
+	    'token',
+	    'client_secret',
+	    'powershell',
+	    '$env:',
+	    'export',
+	    'alias',
+	    'name',
+	    'userpassword',
+	    'email',
+	    'signingkey',
+	    'IdentityFile',
+	    'server',
+	    'username',
+	    'host',
+	    'port',
+	    'hostname',
+	}
 	paths = {
         -- name = '*/path/*',
         -- Default:
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
-    configini = '*/*.ini',
-    yaml_secrets = '*/*.yaml',
+	    venv = '*/venv/*',
+	    virtualenv = '*/virtualenv/*',
+	    dotenv = '*/.env',
+	    config = '*/.config/*',
+	    aliases = '*/.bash_aliases',
+	    dotfiles = '*/dotfiles/*',
+	    powershell = '*.ps1',
+	    gitconfig = '*/.gitconfig',
+	    configini = '*/*.ini',
+	    yaml_secrets = '*/*.yaml',
 	-- Use any name, only the paths will be used.
       },
 
@@ -51,7 +70,7 @@ streamer-mode.setup({opts})
                              --           on when nvim is launched.
 
       conceal_char = '*'  -- Default. This is what will be displayed instead
-	                  -- of your secrets.
+			  -- of your secrets.
 
     })
 <
@@ -59,8 +78,48 @@ streamer-mode.setup({opts})
 The `paths` listed in the example are ON by default. Disable them by passing
 their names to `exclude` during setup.
 
+The |`keywords`| listed above are ON by default. More can be added by calling
+the |sm.setup()| function.
+
 Level will determine if, and how, the hidden text will be displayed in
 your buffer. See |stremer-mode.level|
+
+==============================================================================
+				   KEYWORDS
+						    *keywords* | *sm.keywords*
+
+
+The `keywords` variable is a table of the words that will be 
+followed by concealed text. E.g., if `'alias'` is among the
+keywords, everything that comes after the word `alias` will
+be concealed with |conceal_char|: `alias*`
+	
+    The default |keywords| are: >
+
+	keywords = { 
+	    'api_key',
+	    'token',
+	    'client_secret',
+	    'powershell',
+	    '$env:',
+	    'export',
+	    'alias',
+	    'name',
+	    'userpassword',
+	    'email',
+	    'signingkey',
+	    'IdentityFile',
+	    'server',
+	    'username',
+	    'host',
+	    'port',
+	    'hostname',
+	} 
+<
+To add more keywords, call the |sm.setup()| function and pass
+in a list-like table of strings like above.
+
+
 
 ==============================================================================
 				    LEVELS
