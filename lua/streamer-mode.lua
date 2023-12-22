@@ -29,40 +29,31 @@ M._opts = M.preset_opts
 -- regex lol.
 M._BaseConcealPattern = [[\(%s\s\{-\}\)\@<=.*$]]
 -- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
-M._APIKeyConcealPattern = [[\([Aa][Pp][Ii]_\?[Kk][Ee][Yy]\s\{-\}\)\@<=.*$]]
-M._ClientSecretConcealPattern = [[\([Cc][Ll][Ii][Ee][Nn][Tt]_\?[Ss][Ee][Cc][Rr][Ee][Tt]\s\{-\}\)\@<=.*$]]
-M._TOKENConcealPattern = [[\([Tt][Oo][Kk][Ee][Nn]\s\{-\}\)\@<=.*$]]
+M._APIKeyConcealPattern = [[\([api\|API]\{3}_\?[key\|KEY]\{3}\s\{-\}\)\@<=.*$]]
+M._ClientSecretConcealPattern = [[\([client]\{6}\|[CLIENT]\{6}_\?[secret]\{6}\|[SECRET]\{6}\s\{-\}\)\@<=.*$]]
+M._TOKENConcealPattern = [[\(token\|TOKEN\s\{-\}\)\@<=.*$]]
 M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
 M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=.*$]]
 M._BashAliasConcealPattern = [[\(alias \s\{-\}\)\@<=.*$]]
 
 -- Git
 M._GitSigningKeyConcelPattern = [[\(signingkey\s\{-\}\)\@<=.*$]]
-M._GitEmailConcealPattern = [[\([Ee][Mm][Aa][Ii][Ll]\s\{-\}\)\@<=.*$]]
-M._GitNameConcealPattern = [[\([Nn][Aa][Mm][Ee]\s\{-\}\)\@<=.*$]]
+M._GitEmailConcealPattern = [[\(email\|EMAIL\s\{-\}\)\@<=.*$]]
+M._GitNameConcealPattern = [[\(name\|NAME\s\{-\}\)\@<=.*$]]
 -- Git Credentials
 M._GitCredentialConcealPattern = [[\(credential.helper\s\{-\}\)\@<=.*$]]
 M._GitUserNameConcealPattern = [[\(user.name\s\{-\}\)\@<=.*$]]
 M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
 
 -- SSH
-M._HostNameConcealPattern = [[\([Hh][Oo][Ss][Tt][Nn][Aa][Mm][Ee]\s\{-\}\)\@<=.*$]]
-M._HostConcealPattern = [[\([Hh][Oo][Ss][Tt]\s\{-\}\)\@<=.*$]]
+M._HostNameConcealPattern = [[\([Hh]ostname\|HOSTNAME\s\{-\}\)\@<=.*$]]
+M._HostConcealPattern = [[\([Hh]ost\|HOST\s\{-\}\)\@<=.*$]]
 M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
 
 -- .ini
-M._ServerIPConcealPattern = [[\([Ss][Ee][Rr][Vv][Ee][Rr]\s\{-\}\)\@<=.*$]]
+M._ServerIPConcealPattern = [[\(server\|SERVER\s\{-\}\)\@<=.*$]]
 M._PortConcealPattern = [[\(port\|PORT\s\{-\}\)\@<=.*$]]
--- PORT 
--- port
--- Compounded (Avoid these. Slow.)
-M._EnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=\S*\|\(email\s\{-\}\)\@<=.*$]]
-M._GitConcealPattern = [[\(email\s\{-\}\)\@<=.*$\|\(name\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$]]
-M._MasterConcealPattern =
-  [[\($env:\s\{-\}\)\@<=.*$\|\(export \s\{-\}\)\@<=.*$\|\(email[ ]\?\s\{-\}\)\@<=.*$\|\(name[ ]\?\s\{-\}\)\@<=.*$\|\(signingkey\s\{-\}\)\@<=.*$\|\(TOKEN\s\{-\}\)\@<=.*$\|\(API_KEY\s\{-\}\)\@<=.*$\|\(credential.helper\s\{-\}\)\@<=.*$\|\(user.name\s\{-\}\)\@<=.*$]]
--- SSH IdentityFile, Hostname and GitUserPasswordConcealPattern
-M._OverflowConcealPattern =
-  [[\(user.password\s\{-\}\)\@<=.*$\|\(IdentityFile\s\{-\}\)\@<=.*$\|\(Hostname\s\{-\}\)\@<=.*$]]
+
 
 M._ConcealPatterns = {
   M._APIKeyConcealPattern,
@@ -90,23 +81,23 @@ M._opts.patterns = M._ConcealPatterns
 --[==[ IN PROGRESS ]==]
 
 M._opts.keywords = {
-  api_key = true,
-  token = true,
-  client_secret = true,
-  powershell = true,
-  env = true,
-  export = true,
-  alias = true,
-  git_name = true,
-  git_username = true,
-  git_userpassword = true,
-  git_email = true,
-  git_signingkey = true,
-  identity_file = true,
-  server = true,
-  host = true,
-  port = true,
-  host_name = true,
+  'api_key',
+  'token',
+  'client_secret',
+  'powershell',
+  '$env:',
+  'export',
+  'alias',
+  'name',
+  'userpassword',
+  'email',
+  'signingkey',
+  'IdentityFile',
+  'server',
+  'username',
+  'host',
+  'port',
+  'hostname',
 }
 
 -- Will eventually be used for keyword customization
@@ -160,11 +151,13 @@ M._cursor_levels = {
 ---	     level = 'edit',
 ---      -- A listlike table of default paths to exlude
 ---	     exclude = { 'powershell' }
+---	     keywords = { 'export', 'alias', 'api_key' }
 ---	   })
 --- </code>
 ---
 --- Parameters: ~
 ---   • {opts}  Table of named paths
+---        • keywords: table = { 'keywords', 'to', 'conceal' }
 ---        • paths: table = { any_name = '*/path/*' }
 ---        • level: string = 'secure' -- or: 'soft', 'edit'
 ---        • exclude: table = { 'default', 'path', 'names' }
@@ -186,17 +179,18 @@ M._cursor_levels = {
 ---               on the same line.
 ---
 --- :h streamer-mode.setup
----@param opts? table: paths: table, exclude: table, default_mode: string, conceal_char: string, level: string
+---@param opts? table: keywords: table, paths: table, exclude: table, default_mode: string, conceal_char: string, level: string
 function M.setup(opts)
   -- Gather initial options from setup to use throughout
+  M.default_conceallevel = vim.o.conceallevel
   if opts then
     M._opts.level = opts.level or M._opts.level
     M._opts.paths = opts.paths or M._opts.paths
     M._opts.exclude = opts.exclude or M._opts.exclude
     M._opts.conceal_char = opts.conceal_char or M._opts.conceal_char
     M._opts.default_state = opts.default_state or M._opts.default_state
-    -- TODO: Add kwargs for keywords to conceal: 'export', 'name', etc
     M._opts.patterns = opts.patterns or M._opts.patterns
+    M._opts.keywords = opts.keywords or M._opts.keywords
   else
     opts = M._opts
   end
@@ -220,6 +214,10 @@ function M.setup(opts)
       M._opts.paths[name] = nil
     end
   end
+  -- Add custom keywords
+  if opts.keywords then
+    M:generate_patterns(M._opts.keywords)
+  end
   -- set conceal character
   vim.o.concealcursor = M._cursor_levels[M._opts.level]
   vim.o.conceallevel = 1
@@ -228,7 +226,7 @@ function M.setup(opts)
   if M._opts.default_state == 'on' then
     M:start_streamer_mode()
   else
-    vim.o.conceallevel = 0
+    vim.o.conceallevel = M.default_conceallevel
   end
 end
 
@@ -241,6 +239,7 @@ end
 ---@param path string
 function M:add_path(name, path)
   if path:match('~') then
+    -- TODO: vim.loop.fs_realpath(path) Also viable option. Refactor?
     path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize
   end
   self._opts.paths[name] = path
@@ -249,34 +248,27 @@ end
 ---Takes in a table in the format of { keyword = true }
 ---Any keyword that is assigned a value of `true` will be added to
 ---the conceal patterns.
----@param keywords table
-function M:generate_pattern(keywords)
-  local words = keywords
-  for name, val in pairs(keywords) do
-    if val == 'true' then
-      M._ConcealPatterns[name] = M._BaseConcealPattern:format('name')
-    end
+---@param keywords table list
+function M:generate_patterns(keywords)
+  for i, word in ipairs(keywords) do
+    M._opts.patterns[word] = M._BaseConcealPattern:format(word)
   end
 end
 
 ---Callback for autocmds.
 function M:add_match_conceals()
-  for i, conc in ipairs(M._ConcealPatterns) do
-    table.insert(self._matches, vim.fn.matchadd('Conceal', conc, 9999, -1, { conceal = self._opts.conceal_char }))
+  for i, pattern in ipairs(M._opts.patterns) do
+    table.insert(self._matches, vim.fn.matchadd('Conceal', pattern, 9999, -1, { conceal = self._opts.conceal_char }))
   end
 end
 
 ---Activates Streamer Mode
-function M:start_streamer_mode()
+function M:add_conceals()
   vim.fn.clearmatches()
   self._matches = {}
   self:add_match_conceals()
   self:setup_env_conceals()
-end
-
----Stops Streamer Mode. Alias for `remove_conceals()`
-function M:stop_streamer_mode()
-  self:remove_conceals()
+  vim.o.conceallevel = 1
 end
 
 ---Turns off Streamer Mode (Removes Conceal commands)
@@ -284,7 +276,7 @@ function M:remove_conceals()
   vim.api.nvim_clear_autocmds({ group = self.conceal_augroup })
   vim.fn.clearmatches()
   self._matches = {}
-  vim.o.conceallevel = 0
+  vim.o.conceallevel = self.default_conceallevel
 end
 
 ---Sets up conceals for environment variables
@@ -300,9 +292,29 @@ function M:setup_env_conceals()
   end
 end
 
+---Starts Streamer Mode. Alias for `add_conceals()`
+function M:start_streamer_mode()
+    self:add_conceals()
+    self.enabled = true
+end
+
+---Stops Streamer Mode. Alias for `remove_conceals()`
+function M:stop_streamer_mode()
+  self:remove_conceals()
+  self.enabled = false
+end
+
+function M:toggle_streamer_mode()
+    if self.enabled then
+        self:stop_streamer_mode()
+    else
+        self:start_streamer_mode()
+    end
+end
+
 vim.api.nvim_create_user_command('StreamerMode', function()
-  M.setup({ paths = M._opts.paths, default_state = 'on', level = M._opts.level })
-end, { desc = 'Starts streamer mode.' })
+  M:toggle_streamer_mode()
+end, { desc = 'Toggles streamer mode.' })
 
 vim.api.nvim_create_user_command('StreamerModeOff', function()
   M:stop_streamer_mode()
@@ -321,7 +333,7 @@ vim.api.nvim_create_user_command('StreamerModeSoft', function()
 end, { desc = 'Starts streamer mode with Soft level enabled.' })
 
 vim.api.nvim_create_user_command('SM', function()
-  M.setup({ default_state = 'on' })
+  M:toggle_streamer_mode()
 end, { desc = 'Starts streamer mode.' })
 
 vim.api.nvim_create_user_command('SMoff', function()
