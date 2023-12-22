@@ -28,8 +28,9 @@ Jump to
 
 ### Current Features
 
-Currently supports the concealment of:
-
+By default, Streamer Mode currently supports the concealment of a number of
+keywords. More can be added through the `setup()` function.
+The default keywords to conceal are:  
 * `export`
 * `alias`
 * `$env:`
@@ -48,8 +49,8 @@ Currently supports the concealment of:
 * `server`
 * `port`  
 
+You can add your own keywords to conceal in setup.  
 
- Open an issue to request more!
 
 - Hides environment variables and sensitive `.gitconfig` information.
 
@@ -85,34 +86,54 @@ Plug 'Kolkhis/streamer-mode.nvim'
 
 ###### *:h sm.setup*
 
-After installing, just `require('streamer-mode')` in your `init.lua` and you're set to go!
+
+After installing, just run `:StreamerMode` or `:SM` to turn on Streamer Mode. It will be off by default.
 streamer-mode.nvim applies filters to the most files that will contain sensitive information by default. Check the [default settings](#default-settings)  
 
-#### Default setup:
+
+### Default setup:
+To enable streamer mode by default with the preset options:  
 ```lua
-require('streamer-mode')
-```  
-Then just call `:StreamerMode` (or `:SM`) and Streamer Mode will be active.
+require('streamer-mode').setup({ preset = true, default_state = 'on' })
+```
+Then just call `:StreamerModeOff` (or `:SMoff`) and Streamer Mode will be deactivated.
   
 
 Streamer Mode is disabled by default, which means it won't turn on when Neovim is launched.  
-To enable Streamer Mode on launch:
+To enable Streamer Mode on launch:  
 
 ```lua
 require('streamer-mode').setup({ default_state = 'on' })
-```  
+```
+
 Now Streamer Mode will be active every time a new Neovim session is launched!
     
- <br /> 
 
-#### Advanced Setup:
+### Advanced Setup:
 
 
 ##### These are just examples. To jump to all configuration options, click [here.](#Parameters)
 
+### Custom Keywords
+To set your own keywords to conceal, pass them in as a list-like table to the `setup()` function.  
+The table is formatted as `keywords = { "word", "another_word }`, then `word` and `another_word` will be added to the list of keywords to be concealed.  
+```lua
+require('streamer-mode').setup({
+    preset = true,
+    default_state = 'on',
+    keywords = {
+        "export",
+        "alias",
+        "api_key",
+        "auth_token",
+        "MySecretVariable",
+        "MyAddress",
+    }
+})
+```
 
+#### Custom Paths
 To use [defaults](#default-settings) in addition to your own paths/filetypes:
-
 ```lua
 require('streamer-mode').setup({
   preset = true,
@@ -120,10 +141,10 @@ require('streamer-mode').setup({
     yaml_files = '*/*.yaml',
   },
 })
-```  
- <br /> 
+```
   
 
+#### Custom Behavior and Style Options
 If you want to customize (`conceal_char`, `exclude`, `level`, and `default_state`):
 ```lua
 require('streamer-mode').setup({
@@ -132,14 +153,11 @@ require('streamer-mode').setup({
   default_state = 'off',
   conceal_char = 'X'
 })
-```  
- <br /> 
+```
   
 
-If you want to use custom paths or filetypes instead of applying the filter to the defaults, you can.
-Just pass in the `paths` argument, along with your own paths in the format:
-`paths = { name = '*/path/* }`  
 
+#### Example
 
 Here's an example of a custom configuration:
 
@@ -159,6 +177,13 @@ require('streamer-mode').setup({
     powershell = '*.ps1',
     gitconfig = '*/.gitconfig',
   },
+  keywords = {
+    token = true,
+    auth_token = true,
+    key = true,
+    auth_key = true,
+    export = true,
+  }
   level = 'edit', -- | 'secure' | 'soft'
   default_state = 'on', -- | 'off'
   exclude = { 'powershell' },
@@ -177,7 +202,7 @@ If you want to do this despite that, here's how:
 require('streamer-mode').setup({ paths = { all = '*' } })
 ```  
 
-#### Default Settings
+### Default Settings
 
 The default setup is as follows:
 
@@ -206,7 +231,27 @@ require('streamer-mode').setup({
   conceal_char = '*'  -- Default. This is what will be displayed instead
                       -- of your secrets.
 
-  exclude = { '' }  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
+  exclude = { '' },  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
+
+  keywords = {
+    "api_key",
+    "token",
+    "client_secret",
+    "powershell",
+    "$env:",
+    "export",
+    "alias",
+    "name",
+    "userpassword",
+    "email",
+    "signingkey",
+    "IdentityFile",
+    "server",
+    "username",
+    "host",
+    "port",
+    "hostname",
+  }
 
 })
 
@@ -263,7 +308,6 @@ There are three different levels, each with different behavior.
   Like sudo password input.
 - `'edit'` (default) will enable the text to become visible when the
   cursor goes into insert mode on the same line.
-
 - `'soft'` means the text will become visible when the cursor is
   on the same line.
 
