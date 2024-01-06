@@ -68,6 +68,7 @@ M._opts.keywords = {
   'host',
   'port',
   'hostname',
+  'credential.helper',
 }
 for _, keyword in ipairs(M._opts.keywords) do
     M._opts.patterns[#M._opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
