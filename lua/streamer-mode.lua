@@ -47,7 +47,7 @@ M._opts = M.default_opts
 
 M._opts.patterns = {}
 
-M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(%s\s\{-}\)\zs.*$]]
+M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(\('\|"\)\?%s\('\|"\)\?"\?'\?\s\{-}\)\zs.*$]]
 M._opts.keywords = {
   'api_key',
   'token',
