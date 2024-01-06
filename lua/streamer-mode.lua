@@ -1,7 +1,8 @@
 M = {}
 
 -- Set up default paths.
-M.preset_opts = {
+-- TODO: Refactor paths to be a list
+M.default_opts = {
   paths = {
     -- The names are unimportant, only the paths matter.
     -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
@@ -17,69 +18,36 @@ M.preset_opts = {
     secretsyaml = '*.yaml',
     ssh = '*/.ssh/*',
   },
+  keywords = {
+    'api_key',
+    'token',
+    'client_secret',
+    'powershell',
+    '$env:',
+    'export',
+    'alias',
+    'name',
+    'userpassword',
+    'email',
+    'signingkey',
+    'IdentityFile',
+    'server',
+    'username',
+    'host',
+    'port',
+    'hostname',
+  },
   level = 'secure', -- | 'edit' | 'soft'
   default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
   exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
   conceal_char = '*',
   patterns = M._ConcealPatterns,
 }
+M._opts = M.default_opts
 
-M._opts = M.preset_opts
+M._opts.patterns = {}
 
--- regex lol.
-M._BaseConcealPattern = [[\(%s\s\{-\}\)\@<=.*$]]
--- M._APIKeyConcealPattern = [[\(API_KEY\s\{-\}\)\@<=.*$]]
-M._APIKeyConcealPattern = [[\([api\|API]\{3}_\?[key\|KEY]\{3}\s\{-\}\)\@<=.*$]]
-M._ClientSecretConcealPattern = [[\([client]\{6}\|[CLIENT]\{6}_\?[secret]\{6}\|[SECRET]\{6}\s\{-\}\)\@<=.*$]]
-M._TOKENConcealPattern = [[\(token\|TOKEN\s\{-\}\)\@<=.*$]]
-M._PowerShellEnvConcealPattern = [[\($env:\s\{-\}\)\@<=.*$]]
-M._BashEnvConcealPattern = [[\(export \s\{-\}\)\@<=.*$]]
-M._BashAliasConcealPattern = [[\(alias \s\{-\}\)\@<=.*$]]
-
--- Git
-M._GitSigningKeyConcelPattern = [[\(signingkey\s\{-\}\)\@<=.*$]]
-M._GitEmailConcealPattern = [[\(email\|EMAIL\s\{-\}\)\@<=.*$]]
-M._GitNameConcealPattern = [[\(name\|NAME\s\{-\}\)\@<=.*$]]
--- Git Credentials
-M._GitCredentialConcealPattern = [[\(credential.helper\s\{-\}\)\@<=.*$]]
-M._GitUserNameConcealPattern = [[\(user.name\s\{-\}\)\@<=.*$]]
-M._GitUserPasswordConcealPattern = [[\(user.password\s\{-\}\)\@<=.*$]]
-
--- SSH
-M._HostNameConcealPattern = [[\([Hh]ostname\|HOSTNAME\s\{-\}\)\@<=.*$]]
-M._HostConcealPattern = [[\([Hh]ost\|HOST\s\{-\}\)\@<=.*$]]
-M._IdentityFileConcealPattern = [[\(IdentityFile\s\{-\}\)\@<=.*$]]
-
--- .ini
-M._ServerIPConcealPattern = [[\(server\|SERVER\s\{-\}\)\@<=.*$]]
-M._PortConcealPattern = [[\(port\|PORT\s\{-\}\)\@<=.*$]]
-
-
-M._ConcealPatterns = {
-  M._APIKeyConcealPattern,
-  M._TOKENConcealPattern,
-  M._ClientSecretConcealPattern,
-  M._PowerShellEnvConcealPattern,
-  M._BashEnvConcealPattern,
-  M._BashAliasConcealPattern,
-  M._GitUserNameConcealPattern,
-  M._GitUserPasswordConcealPattern,
-  M._GitCredentialConcealPattern,
-  M._GitSigningKeyConcelPattern,
-  M._GitEmailConcealPattern,
-  M._GitNameConcealPattern,
-  M._HostNameConcealPattern,
-  M._HostConcealPattern,
-  M._IdentityFileConcealPattern,
-  M._ServerIPConcealPattern,
-  M._PortConcealPattern,
-  --
-  M._OpenSSHPrivateKeyConcealPattern,
-}
-
-M._opts.patterns = M._ConcealPatterns
---[==[ IN PROGRESS ]==]
-
+M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(%s\s\{-}\)\zs.*$]]
 M._opts.keywords = {
   'api_key',
   'token',
@@ -90,44 +58,20 @@ M._opts.keywords = {
   'alias',
   'name',
   'userpassword',
+  'user.password',
   'email',
   'signingkey',
   'IdentityFile',
   'server',
   'username',
+  'user.name',
   'host',
   'port',
   'hostname',
 }
-
--- Will eventually be used for keyword customization
-M._opts.conceal_dict = {
-  export = M._opts.patterns._BashEnvConcealPattern,
-  alias = M._opts.patterns._BashAliasConcealPattern,
-  powershell = M._opts.patterns._PowerShellEnvConcealPattern,
-  git_name = M._opts.patterns._GitNameConcealPattern,
-  git_username = M._opts.patterns._GitUserNameConcealPattern,
-  git_userpassword = M._opts.patterns._GitUserPasswordConcealPattern,
-  git_email = M._opts.patterns._GitEmailConcealPattern,
-  git_signingkey = M._opts.patterns._GitSigningKeyConcelPattern,
-  api_key = M._opts.patterns._APIKeyConcealPattern,
-  client_secret = M._opts.patterns._ClientSecretConcealPattern,
-  token = M._opts.patterns._TOKENConcealPattern,
-  identity_file = M._opts.patterns._IdentityFileConcealPattern,
-  host_name = M._opts.patterns._HostNameConcealPattern,
-  host = M._opts.patterns._HostConcealPattern,
-  server = M._opts.patterns._ServerIPConcealPattern,
-  port = M._opts.patterns._PortConcealPattern,
-  credential_helper = M._opts.patterns._GitCredentialConcealPattern,
-}
-
---
---[=[--
-
-
-
---]=]
--- [=[ More Regex coming! ]=]
+for _, keyword in ipairs(M._opts.keywords) do
+    M._opts.patterns[#M._opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
+end
 
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
@@ -181,9 +125,8 @@ M._cursor_levels = {
 --- :h streamer-mode.setup
 ---@param opts? table: keywords: table, paths: table, exclude: table, default_mode: string, conceal_char: string, level: string
 function M.setup(opts)
-  -- Gather initial options from setup to use throughout
   M.default_conceallevel = vim.o.conceallevel
-  if opts then
+  if opts and opts.preset then
     M._opts.level = opts.level or M._opts.level
     M._opts.paths = opts.paths or M._opts.paths
     M._opts.exclude = opts.exclude or M._opts.exclude
@@ -191,33 +134,30 @@ function M.setup(opts)
     M._opts.default_state = opts.default_state or M._opts.default_state
     M._opts.patterns = opts.patterns or M._opts.patterns
     M._opts.keywords = opts.keywords or M._opts.keywords
-  else
+    M._opts = M.default_opts
+    M.opts = M.default_opts
+  elseif not opts then
     opts = M._opts
   end
 
-  if opts.preset then
-    M._opts = M.preset_opts -- Catch if user chooses preset AND custom paths
-    if opts.paths then
-      for name, path in pairs(opts.paths) do
-        M._opts[name] = path
-      end
-    end
-  end
-  if M._opts.paths then
-    for name, path in pairs(M._opts.paths) do
+  if opts.paths then
+    for name, path in pairs(opts.paths) do
       M._opts.paths[name] = vim.fs.normalize(path, { expand_env = true })
     end
   end
+
   -- Remove any unwanted paths
   if opts.exclude then
-    for i, name in ipairs(opts['exclude']) do
+    for _, name in ipairs(opts.exclude) do
       M._opts.paths[name] = nil
     end
   end
+
   -- Add custom keywords
   if opts.keywords then
-    M:generate_patterns(M._opts.keywords)
+    M:generate_patterns(opts.keywords)
   end
+
   -- set conceal character
   vim.o.concealcursor = M._cursor_levels[M._opts.level]
   vim.o.conceallevel = 1
@@ -239,8 +179,7 @@ end
 ---@param path string
 function M:add_path(name, path)
   if path:match('~') then
-    -- TODO: vim.loop.fs_realpath(path) Also viable option. Refactor?
-    path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize
+    path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize while keeping globs
   end
   self._opts.paths[name] = path
 end
@@ -250,14 +189,32 @@ end
 ---the conceal patterns.
 ---@param keywords table list
 function M:generate_patterns(keywords)
-  for i, word in ipairs(keywords) do
-    M._opts.patterns[word] = M._BaseConcealPattern:format(word)
+  -- local specials = { ['*'] = '%*', ['['] = '%[', [']'] = '%]', ['.'] = '%.', ['-'] = '%-' }
+  -- for _, word in ipairs(keywords) do
+  --   local escaped = word:gsub('[' .. table.concat(specials, '') .. ']', function(c)
+  --     return specials[c]
+  --   end)
+  --   M._opts.patterns[escaped] = M._BaseKeywordConcealPattern:format(word)
+  -- end
+
+  for _, word in ipairs(keywords) do
+    -- Check for regex special characters
+    if word:find('%*|%[|%]') then
+      -- Replace special characters with their escaped equivalents
+      word = word:find('%*') and word:gsub([[%*]], [[\*]]) or word
+      word = word:find('%[') and word:gsub('%[', [[\[]]) or word
+      word = word:find('%]') and word:gsub('%]', [=[\]]=]) or word
+    end
+
+    M._opts.patterns[word] = M._BaseKeywordConcealPattern:format(word)
   end
 end
 
+-- TODO: Add option for user to add custom regex to act as keywords
+
 ---Callback for autocmds.
 function M:add_match_conceals()
-  for i, pattern in ipairs(M._opts.patterns) do
+  for _, pattern in ipairs(M._opts.patterns) do
     table.insert(self._matches, vim.fn.matchadd('Conceal', pattern, 9999, -1, { conceal = self._opts.conceal_char }))
   end
 end
@@ -269,6 +226,7 @@ function M:add_conceals()
   self:add_match_conceals()
   self:setup_env_conceals()
   vim.o.conceallevel = 1
+  self.enabled = true
 end
 
 ---Turns off Streamer Mode (Removes Conceal commands)
@@ -277,12 +235,13 @@ function M:remove_conceals()
   vim.fn.clearmatches()
   self._matches = {}
   vim.o.conceallevel = self.default_conceallevel
+  self.enabled = false
 end
 
 ---Sets up conceals for environment variables
 function M:setup_env_conceals()
-  for name, path in pairs(self._opts.paths) do
-    vim.api.nvim_create_autocmd({ 'BufRead' }, {
+  for _, path in pairs(self._opts.paths) do
+    vim.api.nvim_create_autocmd({ 'BufEnter' }, {
       pattern = path,
       callback = function()
         self:add_match_conceals()
@@ -294,22 +253,20 @@ end
 
 ---Starts Streamer Mode. Alias for `add_conceals()`
 function M:start_streamer_mode()
-    self:add_conceals()
-    self.enabled = true
+  self:add_conceals()
 end
 
 ---Stops Streamer Mode. Alias for `remove_conceals()`
 function M:stop_streamer_mode()
   self:remove_conceals()
-  self.enabled = false
 end
 
 function M:toggle_streamer_mode()
-    if self.enabled then
-        self:stop_streamer_mode()
-    else
-        self:start_streamer_mode()
-    end
+  if self.enabled then
+    self:stop_streamer_mode()
+  else
+    self:start_streamer_mode()
+  end
 end
 
 vim.api.nvim_create_user_command('StreamerMode', function()
