@@ -45,7 +45,6 @@ M.default_opts = {
 }
 M._opts = M.default_opts
 
-
 M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(\%%['"]%s\%%['"]\%%(\s\{-}\)\?\)\zs.*$]]
 M._opts.keywords = {
   'api_key',
@@ -71,9 +70,10 @@ M._opts.keywords = {
 }
 M._opts.patterns = {}
 for _, keyword in ipairs(M._opts.keywords) do
-    M._opts.patterns[#M._opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
+  M._opts.patterns[#M._opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
 end
 
+M.file_conceal_augroup = vim.api.nvim_create_augroup('StreamerModeFileConceal', { clear = true })
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
 M._cursor_levels = {
@@ -190,14 +190,6 @@ end
 ---the conceal patterns.
 ---@param keywords table list
 function M:generate_patterns(keywords)
-  -- local specials = { ['*'] = '%*', ['['] = '%[', [']'] = '%]', ['.'] = '%.', ['-'] = '%-' }
-  -- for _, word in ipairs(keywords) do
-  --   local escaped = word:gsub('[' .. table.concat(specials, '') .. ']', function(c)
-  --     return specials[c]
-  --   end)
-  --   M._opts.patterns[escaped] = M._BaseKeywordConcealPattern:format(word)
-  -- end
-
   for _, word in ipairs(keywords) do
     -- Check for regex special characters
     if word:find('%*|%[|%]') then
@@ -226,6 +218,8 @@ function M:add_conceals()
   self._matches = {}
   self:add_match_conceals()
   self:setup_env_conceals()
+  self:add_ssh_key_conceals()
+  self:start_ssh_conceals()
   vim.o.conceallevel = 1
   self.enabled = true
 end
@@ -270,44 +264,33 @@ function M:toggle_streamer_mode()
   end
 end
 
-vim.api.nvim_create_user_command('StreamerMode', function()
-  M:toggle_streamer_mode()
-end, { desc = 'Toggles streamer mode.' })
+M.ssh_conceal_pattern =
+  [[^-\{1,}BEGIN OPENSSH PRIVATE KEY-\{-1,}\n\zs\(\_.\{-}\)\ze-\{1,}END OPENSSH PRIVATE KEY-\{-1,}\n\?]]
+function M:start_ssh_conceals()
+  table.insert(
+    self._matches,
+    vim.fn.matchadd('Conceal', self.ssh_conceal_pattern, 9999, -1, { conceal = self._opts.conceal_char })
+  )
+end
 
-vim.api.nvim_create_user_command('StreamerModeOff', function()
-  M:stop_streamer_mode()
-end, { desc = 'Stops streamer mode.' })
-
-vim.api.nvim_create_user_command('StreamerModeSecure', function()
-  M.setup({ level = 'secure', default_state = 'on' })
-end, { desc = 'Starts streamer mode with Secure level enabled.' })
-
-vim.api.nvim_create_user_command('StreamerModeEdit', function()
-  M.setup({ level = 'edit', default_state = 'on' })
-end, { desc = 'Starts streamer mode with Edit level enabled.' })
-
-vim.api.nvim_create_user_command('StreamerModeSoft', function()
-  M.setup({ level = 'soft', default_state = 'on' })
-end, { desc = 'Starts streamer mode with Soft level enabled.' })
-
-vim.api.nvim_create_user_command('SM', function()
-  M:toggle_streamer_mode()
-end, { desc = 'Starts streamer mode.' })
-
-vim.api.nvim_create_user_command('SMoff', function()
-  M:remove_conceals()
-end, { desc = 'Stops streamer mode.' })
-
-vim.api.nvim_create_user_command('SMsecure', function()
-  M.setup({ level = 'secure', default_state = 'on' })
-end, { desc = 'Starts streamer mode with Secure level enabled.' })
-
-vim.api.nvim_create_user_command('SMedit', function()
-  M.setup({ level = 'edit', default_state = 'on' })
-end, { desc = 'Starts streamer mode with Edit level enabled.' })
-
-vim.api.nvim_create_user_command('SMsoft', function()
-  M.setup({ level = 'soft', default_state = 'on' })
-end, { desc = 'Starts streamer mode with Soft level enabled.' })
+function M:add_ssh_key_conceals()
+  vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+    pattern = '*/.ssh/id_*',
+    callback = function()
+        -- Check that the filename doesn't end with .pub
+      if vim.fn.expand('%:e') ~= 'pub' then
+        self:start_ssh_conceals()
+      end
+    end,
+    group = self.file_conceal_augroup,
+  })
+  -- vim.api.nvim_create_autocmd({ 'BufLeave' }, {
+  --   pattern = '*/.ssh/id_*',
+  --   callback = function()
+  --     vim.fn.matchdelete(self.ssh_match)
+  --   end,
+  --   group = self.file_conceal_augroup,
+  -- })
+end
 
 return M
