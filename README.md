@@ -12,13 +12,13 @@ variables and other sensitive information.
 If you find a bug, please let me know! I'll try to fix it as soon as I can.  
 
 
-> ##### Side note: It's recommended that you find a more secure way to store VERY private information than in plain text environment variables. But sometimes it's just easier for a temporary solution.  
+> #### Side note: It's recommended that you find a more secure way to store VERY private information than in plain text environment variables. But sometimes it's just easier for a temporary solution.  
 
 
 
-If anyone has any requests for new concealments, customizations, or other features, please don't hesitate to let me know. Just [open an issue!](https://github.com/Kolkhis/streamer-mode.nvim/issues) I'll add them!  
+If anyone has any requests for new customizations or other features, please don't hesitate to let me know. Just [open an issue](https://github.com/Kolkhis/streamer-mode.nvim/issues)!
 
-Jump to  
+## Table of Contents
 
 - [Installation](#installation)  
 - [Setup](#setup)  
@@ -29,33 +29,37 @@ Jump to
     - [Custom Behavior and Style Options](#custom-behavior-and-style-options)  
 - [Levels](#levels)  
 - [Commands](#commands)  
-- [Donation](#donation)  
 
 ### Current Features  
 
 By default, Streamer Mode currently supports the concealment of a number of  
 keywords. More can be added through the `setup()` function.  
-The default keywords to conceal are:  
-* `export`
-* `alias`
-* `$env:`
+The default concealed keywords (case-insensitive):  
+* `API_KEY`
 * `name`
 * `email`
+* `export`
 * `signingkey`
 * `Hostname`
-* `host`
 * `IdentityFile`
+* `credential.helper`
 * `user.name` 
 * `user.email`
 * `user.password`
-* `API_KEY`
+* `host`
+* `$env:`
+* `alias`
 * `TOKEN` 
-* `credential.helper`
 * `server`
 * `port`  
 
-You can add your own keywords to conceal in setup.  
+You can specify your own keywords to conceal in [setup](#setup).  
 
+- Hides the contents of all SSH private keys (`id_rsa`, `id_ed25519`, `id_dsa`, etc.)  
+  in any `.ssh` directory.  
+    - Note that this is reliant on the filename starting with `id_`.  
+      I will be adding support for private SSH keys with custom filenames  
+      in the future.
 
 - Hides environment variables and sensitive `.gitconfig` information.  
 
@@ -63,7 +67,7 @@ You can add your own keywords to conceal in setup.
 
   - Check [here](#levels) or `:h sm.levels` for more information on level behaviors.  
 
-- Ability to create type out new environment variables without displaying them (secure level), like sudo password input.  
+- Ability to type out new environment variables without displaying them (secure level), like sudo password input.  
 
 ## Installation  
 
@@ -75,7 +79,7 @@ Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 use('Kolkhis/streamer-mode.nvim')  
 ```
 
-Using [lazy.nvim]()  
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)  
 
 ```lua  
 { 'Kolkhis/streamer-mode.nvim' },
@@ -83,7 +87,7 @@ Using [lazy.nvim]()
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)  
 
-```vimscript  
+```vim  
 Plug 'Kolkhis/streamer-mode.nvim'  
 ```
 
@@ -92,8 +96,8 @@ Plug 'Kolkhis/streamer-mode.nvim'
 ###### *:h sm.setup*  
 
 
-After installing, just run `:StreamerMode` or `:SM` to turn on Streamer Mode. It will be off by default.  
-streamer-mode.nvim applies filters to the most files that will contain sensitive information by default. Check the [default settings](#default-settings)  
+After installing, just run `:StreamerMode` or `:SM` to toggle on Streamer Mode. It will be off by default.  
+`streamer-mode.nvim` applies filters to most of the files that will contain sensitive information by default. See [default settings](#default-settings).  
 
 
 ### Default setup:  
@@ -114,31 +118,32 @@ require('streamer-mode').setup({ default_state = 'on' })
 Now Streamer Mode will be active every time a new Neovim session is launched!  
     
 
-### Advanced Setup:  
-
-
-##### These are just examples. To jump to all configuration options, click [here.](#Parameters)  
+## Advanced Setup:  
+##### These are just examples. To jump to all configuration options, see the [parameters](#Parameters) section.  
 
 ### Custom Keywords  
-To set your own keywords to conceal, pass them in as a list-like table to the `setup()` function.  
-The table is formatted as `keywords = { "word", "another_word }`, then `word` and `another_word` will be added to the list of keywords to be concealed.  
+To set your own keywords to conceal, pass them in as a list-like table to  
+the `require('streamer-mode').setup()` function.  
+
+The `keywords` table is formatted as follows:  
 ```lua  
 require('streamer-mode').setup({
     preset = true,
     default_state = 'on',
     keywords = {
-        "export",
-        "alias",
+        "secret",
         "api_key",
+        "token",
         "auth_token",
         "MySecretVariable",
         "MyAddress",
     }
 })  
 ```
-The kewords are not case-sensitive. Adding `API_KEY` will conceal both `API_KEY` and `api_key`.  
+Keywords are not case-sensitive.  
+Adding `API_KEY` will conceal both `API_KEY` and `api_key`.  
 
-#### Custom Paths  
+### Custom Paths  
 To use [defaults](#default-settings) in addition to your own paths/filetypes:  
 ```lua  
 require('streamer-mode').setup({
@@ -150,7 +155,7 @@ require('streamer-mode').setup({
 ```
   
 
-#### Custom Behavior and Style Options  
+### Custom Behavior and Style Options  
 If you want to customize (`conceal_char`, `exclude`, `level`, and `default_state`):  
 ```lua  
 require('streamer-mode').setup({
@@ -163,7 +168,7 @@ require('streamer-mode').setup({
   
 
 
-#### Example  
+### Example  
 
 Here's an example of a custom configuration:  
 
@@ -196,19 +201,18 @@ require('streamer-mode').setup({
   conceal_char = 'X' -- Can be any character  
 })  
 ```
- <br /> 
 
+### Enabling Streamer Mode for all files  
 While it is possible to enable Streamer Mode for all files, it's not recommended.  
 It's possible for this to slow down your editor. 
-Most common files that will contain sensitive information are already in the defaults (if I missed any please let me know). 
-  
+Most common files that will contain sensitive information are already in the defaults. 
 
-If you want to do this despite that, here's how:  
+If you still want to do this despite that, here's how:  
 ```lua  
 require('streamer-mode').setup({ paths = { all = '*' } })  
-```  
+```
 
-### Default Settings  
+## Default Settings  
 
 The default setup is as follows:  
 
@@ -234,12 +238,15 @@ require('streamer-mode').setup({
 
   default_state = 'off',  -- Whether or not streamer mode turns on when nvim is launched.  
 
-  conceal_char = '*'  -- Default. This is what will be displayed instead  
+  conceal_char = '*',  -- Default. This is what will be displayed instead  
                       -- of your secrets.  
 
   exclude = { '' },  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'  
 
-  keywords = {
+  -- Any text appearing after one of the keywords specified here will be concealed.  
+  -- They are case-insensitive.  
+  -- E.g., passing in 'API_KEY' will conceal both 'API_KEY' and 'api_key'.  
+  keywords = { 
     "api_key",
     "token",
     "client_secret",
@@ -263,22 +270,25 @@ require('streamer-mode').setup({
 
 ```
 
-#### Parameters:  
+### Parameters:  
 
 ##### All optional. Just calling this function will use the defaults.  
 
-- `paths`: Dictionary-like Table. The paths/files that Streamer Mode will apply to.  
-  - Pass in paths in the format: `paths = { name = '*/path/* }`
-  - Pass in filetypes in the same format: ` paths = { name = '*.txt }`
-  - You can apply streamer mode to ALL files (not recommended): `paths = { all = '*' }`
-- `level`: String. The level in which Streamer Mode will be in effect.  
+* `keywords`: List-like Table of strings. Keywords that will be concealed.  
+    * Any text that appears **after** one of these keywords will be concealed 
+      with `conceal_char` (default is `*`).  
+* `paths`: Dictionary-like Table. The paths/files that Streamer Mode will apply to.  
+    * Pass in paths in the format: `paths = { name = '*/path/* }`
+    * Pass in filetypes in the same format: ` paths = { name = '*.txt }`
+    * You can apply streamer mode to ALL files (not recommended): `paths = { all = '*' }`
+* `level`: String. The level in which Streamer Mode will be in effect.  
   See more about the different [levels](#levels) below.  
-- `default_state`: Whether or not Streamer Mode will be active  
+* `default_state`: Whether or not Streamer Mode will be active  
   when you first launch a Neovim session. It's recommended to set this to `'off'`,
   turning it on when needed.  
-- `exclude`: List-like table of strings. Only necessary if you want to use the  
+* `exclude`: List-like table of strings. Only necessary if you want to use the  
   some of the defaults, but not all of them.  
-- `conceal_char`: String. This is the character that will be displayed in place of your hidden text.  
+* `conceal_char`: String. This is the character that will be displayed in place of your hidden text.  
 
 #### Example Custom Setup  
 
