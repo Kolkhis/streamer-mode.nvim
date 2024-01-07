@@ -45,9 +45,8 @@ M.default_opts = {
 }
 M._opts = M.default_opts
 
-M._opts.patterns = {}
 
-M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(\('\|"\)\?%s\('\|"\)\?"\?'\?\s\{-}\)\zs.*$]]
+M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(\%%['"]%s\%%['"]\%%(\s\{-}\)\?\)\zs.*$]]
 M._opts.keywords = {
   'api_key',
   'token',
@@ -70,6 +69,7 @@ M._opts.keywords = {
   'hostname',
   'credential.helper',
 }
+M._opts.patterns = {}
 for _, keyword in ipairs(M._opts.keywords) do
     M._opts.patterns[#M._opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
 end
