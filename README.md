@@ -149,7 +149,7 @@ To use [defaults](#default-settings) in addition to your own paths/filetypes:
 require('streamer-mode').setup({
   preset = true,
   paths = {
-    '*/*.yaml',
+    '*/*.yaml'
   },
 })  
 ```
@@ -175,7 +175,7 @@ Here's an example of a custom configuration:
 
 require('streamer-mode').setup({
   paths = {
-	-- Any path in here will hide exports and .gitconfig personals. (and $env:s)  
+	-- Any path in here will conceal any keywords in the `keywords` table.
     '*/venv/*',
     '*/virtualenv/*',
     '*/.env',
@@ -187,11 +187,11 @@ require('streamer-mode').setup({
     '*/.gitconfig',
   },
   keywords = {
-    token = true,
-    auth_token = true,
-    key = true,
-    auth_key = true,
-    export = true,
+    'token',
+    'auth_token',
+    'key',
+    'auth_key',
+    'export',
   }
   level = 'edit', -- | 'secure' | 'soft'  
   default_state = 'on', -- | 'off'  
