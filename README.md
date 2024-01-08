@@ -28,6 +28,7 @@ If anyone has any requests for new customizations or other features, please don'
         * [Custom Keywords](#custom-keywords)  
         * [Custom Paths and Filetypes](#custom-paths-and-filetypes)  
         * [Custom Behavior and Style Options](#custom-behavior-and-style-options)  
+        * [Example Custom Setup](#example-custom-setup)
 * [Levels](#levels)  
 * [Commands](#commands)  
 * [Current Features](#current-features)  
@@ -176,7 +177,7 @@ require('streamer-mode').setup({
   
 
 
-### Example  
+### Example Custom Setup  
 
 Here's an example of a custom configuration.  
 Note that passing in your own `paths` and `keywords` will disable the  
@@ -188,22 +189,21 @@ require('streamer-mode').setup({
   use_defaults = true,  
   paths = {
 	-- Any path in here will conceal any keywords in the `keywords` table.  
-    '*/venv/*',
-    '*/virtualenv/*',
+    '*/dotenv/*',
     '*/.env',
-    '*/.config/*',
-    '~/.bash_aliases',
+    '*.c',
+    '~/.bash*',
     '~/.dotfiles/*',
-    '*/dotfiles/*',
-    '*.ps1',
+    '~/.my_config/*',
     '*/.gitconfig',
   },
   keywords = {
     'token',
     'auth_token',
-    'key',
     'auth_key',
-    'export',
+    'my_key',
+    'MySecretVariable',
+    'MyAddress',
   }
   level = 'edit', -- | 'secure' | 'soft'  
   default_state = 'on', -- | 'off'  
@@ -213,8 +213,7 @@ require('streamer-mode').setup({
 
 ## Default Settings  
 
-The default setup is as follows:  
-
+The default settings are as follows:  
 ```lua  
 require('streamer-mode').setup({
   -- Streamer Mode will apply to any path in here.  
@@ -277,52 +276,25 @@ require('streamer-mode').setup({
 
 ##### All optional. Just calling this function will use the defaults.  
 
-* `use_defaults`: Boolean. Whether or not to use the default paths and keywords.  
+* `use_defaults` (Boolean): Whether or not to use the default paths and keywords.  
     * If you do not specify this parameter, it will default to `true`.  
     * Note that if this is not set to `false`, then any custom `paths` and `keywords`  
       will be used **in addition** to the default paths and keywords.  
-* `keywords`: List-like Table of strings. Keywords that will be concealed.  
+* `keywords` (List-like Table): Keywords that will be concealed.  
     * Any text that appears **after** one of these keywords will be concealed 
       with `conceal_char` (default is `*`).  
     * It is possible to pass a Vim basic regular expression as a keyword.  
-* `paths`: List-like Table. The paths/files that Streamer Mode will apply to.  
-    * Pass in paths in the format: `paths = { '*/path/* }`
-    * Pass in filetypes in the same format: ` paths = { '*.txt }`
-    * You can apply streamer mode to ALL files (not recommended): `paths = { '*' }`
-* `level`: String. The level in which Streamer Mode will be in effect.  
+* `paths` (List-like Table): The paths and filetypes that Streamer Mode will apply to.  
+    * Pass in paths in the format: `paths = { '*/path/*' }`
+    * Pass in filetypes in the same format: ` paths = { '*.txt' }`
+    * You can apply streamer mode to all files ([may slow down your editor](#enabling-streamer-mode-for-all-files)): `paths = { '*' }`
+* `level` (String): The level in which Streamer Mode will be in effect.  
   See more about the different [levels](#levels) below.  
-* `default_state`: Whether or not Streamer Mode will be active  
+* `default_state` (String): Whether or not Streamer Mode will be active  
   when you first launch a Neovim session. It's recommended to set this to `'off'`,
   turning it on when needed.  
-* `conceal_char`: String. This is the character that will be displayed in place of your hidden text.  
+* `conceal_char` (String): This is the character that will be displayed in place of your hidden text.  
 
-### Example Custom Setup  
-
-> init.lua  
-
-```lua  
-require('streamer-mode').setup({
-  use_defaults = true,
-    paths = {
-        '*.sh',
-        '*/.config/*',
-        '*/venv/*',
-        '*/.bash_aliases',
-        '*.ps1',
-        '*/.gitconfig',
-    },
-    keywords = {
-        'secret',
-        'api_key',
-        'token',
-        'auth_token',
-        'MySecretVariable',
-        'MyAddress',
-    }
-    level = 'edit',
-    default_state = 'on',
-})  
-```
 
 ## Levels  
 
