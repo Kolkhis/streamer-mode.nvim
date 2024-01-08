@@ -61,10 +61,10 @@ M.cursor_levels = {
 }
 
 --- Setup function for the user. Configures default behavior.
---- Usage: >
+--- Usage: >lua
 ---	  require('streamer-mode').setup({
----      -- Use all the default paths
----      preset = true,
+---	     preset = true, -- DEPRECATED - Use `use_defaults`
+---	     use_defaults = true -- | false
 ---      -- Use custom paths
 ---      paths = { '~/projects/*' },
 ---      -- Set Streamer Mode to be active when nvim is launched
@@ -77,11 +77,12 @@ M.cursor_levels = {
 ---
 --- Parameters: ~
 ---   • {opts}  Table of named paths
+---     • use_defaults: boolean = true | false
 ---     • keywords: table = { 'keywords', 'to', 'conceal' }
----     • paths: table = { any_name = '*/path/*' }
----     • level: string = 'secure' -- or: 'soft', 'edit'
+---     • paths: table = { '*/paths/*', '*to_use/*' }
+---     • level: string = 'secure' -- | 'soft' | 'edit'
 ---     • conceal_char: string = '*' -- default
----     • default_state: string = 'on' -- or 'off'
+---     • default_state: string = 'on' -- | 'off'
 ---     • levels:
 ---        • `'secure'` will prevent the concealed text from becoming
 ---          visible at all.
@@ -103,11 +104,26 @@ M.cursor_levels = {
 ---level: string
 function M.setup(user_opts)
   user_opts = user_opts or {}
-  local opts = vim.tbl_deep_extend('force', default_opts, user_opts)
+  local opts = {}
+
+  if user_opts.use_defaults or user_opts.use_defaults == nil then
+    opts = vim.tbl_deep_extend('force', default_opts, user_opts)
+    for i = 1, #default_opts.paths do
+      opts.paths[#opts.paths + 1] = default_opts.paths[i]
+    end
+    for i = 1, #default_opts.keywords do
+      opts.keywords[#opts.keywords + 1] = default_opts.keywords[i]
+    end
+  elseif user_opts.use_defaults == false then
+    opts = user_opts
+  end
+
   M.opts = opts
 
-  if table.concat(opts.keywords) ~= table.concat(default_opts.keywords) then
-    M:generate_patterns(opts.keywords)
+  if opts.keywords and default_opts.keywords then
+    if table.concat(opts.keywords) ~= table.concat(default_opts.keywords) then
+      M:generate_patterns(opts.keywords)
+    end
   end
 
   M.default_conceallevel = vim.o.conceallevel
@@ -122,15 +138,15 @@ end
 ---the conceal patterns.
 ---@param keywords table list
 function M:generate_patterns(keywords)
-  for _, word in ipairs(keywords) do
-    self.opts.patterns[#self.opts.patterns + 1] = self._BaseKeywordConcealPattern:format(word)
+  for i = 1, #keywords do
+    self.opts.patterns[#self.opts.patterns + 1] = self._BaseKeywordConcealPattern:format(keywords[i])
   end
 end
 
 ---Callback for autocmds.
 function M:add_match_conceals()
-  for _, pattern in ipairs(M.opts.patterns) do
-    table.insert(self._matches, vim.fn.matchadd('Conceal', pattern, 9999, -1, { conceal = self.opts.conceal_char }))
+  for i = 1, #self.opts.patterns do
+    table.insert(self._matches, vim.fn.matchadd('Conceal', self.opts.patterns[i], 9999, -1, { conceal = self.opts.conceal_char }))
   end
 end
 
@@ -138,13 +154,13 @@ end
 function M:add_conceals()
   vim.fn.clearmatches()
   self._matches = {}
+  self:setup_conceal_autocmds()
+  self:setup_ssh_conceal_autocmds()
   self:add_match_conceals()
-  self:setup_env_conceals()
-  self:add_ssh_key_conceals()
   self:start_ssh_conceals()
   vim.o.conceallevel = 1
   self.enabled = true
-  self.autocmds = vim.api.nvim_get_autocmds({ group = M._conceal_augroup })
+  self.autocmds = vim.api.nvim_get_autocmds({ group = M.conceal_augroup })
 end
 
 ---Turns off Streamer Mode (Removes Conceal commands)
@@ -157,14 +173,14 @@ function M:remove_conceals()
 end
 
 ---Sets up conceals for environment variables
-function M:setup_env_conceals()
+function M:setup_conceal_autocmds()
   for _, path in pairs(self.opts.paths) do
     vim.api.nvim_create_autocmd({ 'BufEnter' }, {
       pattern = path,
       callback = function()
         self:add_match_conceals()
       end,
-      group = self._conceal_augroup,
+      group = self.conceal_augroup,
     })
   end
 end
@@ -195,7 +211,7 @@ function M:start_ssh_conceals()
   )
 end
 
-function M:add_ssh_key_conceals()
+function M:setup_ssh_conceal_autocmds()
   vim.api.nvim_create_autocmd({ 'BufEnter' }, {
     pattern = '*/.ssh/id_*',
     callback = function()
