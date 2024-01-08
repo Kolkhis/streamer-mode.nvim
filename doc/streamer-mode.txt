@@ -8,8 +8,9 @@ by Kolkhis
 
 Intro 
  
-    streamer-mode.nvim is plugin that will hide your environment variables 
- and sensitive Git config information.
+    streamer-mode.nvim is plugin that will hide your environment variables,
+ SSH keys, sensitive Git config information, and anything else you want to
+ hide from your stream.
 
 
 ==============================================================================
@@ -17,36 +18,39 @@ Intro
 							*streamer-mode.setup()*
 								    *sm.setup*
 streamer-mode.setup({opts})                         
-    Setup function to be run by user. Configures the defaults, pickers and
-    extensions of telescope. 
+    Setup function for the user to run. Configures the behavior of 
+    `streamer-mode.nvim`.
 
     Usage: ~
-    >
+    >lua
     Defaults can be used by calling like:
     
         require('streamer-mode').setup({ preset = true })
 
     To set up a custom config:
     require('streamer-mode').setup{
-	keywords = { 
-	    'api_key',
-	    'token',
-	    'client_secret',
-	    'powershell',
-	    '$env:',
-	    'export',
-	    'alias',
-	    'name',
-	    'userpassword',
-	    'email',
-	    'signingkey',
-	    'IdentityFile',
-	    'server',
-	    'username',
-	    'host',
-	    'port',
-	    'hostname',
-	}
+        keywords = {
+          'api_key',
+          'token',
+          'client_secret',
+          'powershell',
+          '$env:',
+          'export',
+          'alias',
+          'name',
+          'userpassword',
+          'username',
+          'user.name',
+          'user.password',
+          'user.email',
+          'email',
+          'signingkey',
+          'IdentityFile',
+          'server',
+          'host',
+          'port',
+          'credential.helper',
+        },
 	paths = {
         -- name = '*/path/*',
         -- Default:
@@ -75,11 +79,11 @@ streamer-mode.setup({opts})
     })
 <
 
-The `paths` listed in the example are ON by default. Disable them by passing
-their names to `exclude` during setup.
+The `paths` listed in the example are on by default. Disable them by 
+passing your own paths to the |sm.setup()| function.
 
-The |`keywords`| listed above are ON by default. More can be added by calling
-the |sm.setup()| function.
+The |keywords| listed above are active by default. More can be added by 
+calling the |sm.setup()| function.
 
 Level will determine if, and how, the hidden text will be displayed in
 your buffer. See |stremer-mode.level|
@@ -94,27 +98,27 @@ followed by concealed text. E.g., if `'alias'` is among the
 keywords, everything that comes after the word `alias` will
 be concealed with |conceal_char|: `alias*`
 	
-    The default |keywords| are: >
-
-	keywords = { 
-	    'api_key',
-	    'token',
-	    'client_secret',
-	    'powershell',
-	    '$env:',
-	    'export',
-	    'alias',
-	    'name',
-	    'userpassword',
-	    'email',
-	    'signingkey',
-	    'IdentityFile',
-	    'server',
-	    'username',
-	    'host',
-	    'port',
-	    'hostname',
-	} 
+    The default |keywords| are: 
+    >lua
+    keywords = { 
+	'api_key',
+	'token',
+	'client_secret',
+	'powershell',
+	'$env:',
+	'export',
+	'alias',
+	'name',
+	'userpassword',
+	'email',
+	'signingkey',
+	'IdentityFile',
+	'server',
+	'username',
+	'host',
+	'port',
+	'hostname',
+    } 
 <
 To add more keywords, call the |sm.setup()| function and pass
 in a list-like table of strings like above.
@@ -126,21 +130,18 @@ in a list-like table of strings like above.
 							 *streamer-mode.levels*
 								    *sm.levels*
 • Levels:
-
 							*sm.secure* | *secure*
-    • `'secure'` will disable the text becoming visible until
-      the `level` changes. (see |streamer-mode.command|)
-      You can also type out new exports (or other environment 
-      variables) and the text will not be shown.
-      Like sudo password input.
+    • `'secure'` will prevent the concealed text from becoming
+	visible at all. This will also conceal any keywords while 
+	typing them (like sudo password input).
 
 							    *sm.edit* | *edit*
-    • `'edit'` will enable the text to become visible when the 
-       cursor goes into insert mode on the same line.
+    • `'edit'` will allow the concealed text to become visible
+      only when the cursor goes into insert mode on the same line.
 
 							    *sm.soft* | *soft*
-    • `'soft'` means the text will become visible when the cursor is 
-      on the same line.
+    • `'soft'` will allow the concealed text to become visible
+      when the cursor is on the same line in any mode.
 
 
 
@@ -157,32 +158,28 @@ in a list-like table of strings like above.
 
 						       *:StreamerMode* | *:SM*
 
-    • `:StreamerMode` (or `:SM`) - Starts Streamer Mode.
+    • `:StreamerMode` (or `:SM`) - Toggles Streamer Mode on and off.
 
 
 
 						 *:StreamerModeOff* | *:SMoff*
-
     • `:StreamerModeOff` (or `:SMoff`) - Shuts off Streamer Mode.
 
 
 
 					   *:StreamerModeSecure* | *:SMsecure*
-
-    • `:StreamerModeSecure` 
-      (or `:SMsecure`) - Starts Streamer Mode in `'secure'` mode.
+    • `:StreamerModeSecure` (or `:SMsecure`) - Starts Streamer Mode
+					       in `'secure'` mode.
 
 
 
 					       *:StreamerModeEdit* | *:SMedit*
-
     • `:StreamerModeEdit` (or `:SMedit`) - Starts Streamer Mode in `'edit'` mode.
 
 
 
 
 					       *:StreamerModeSoft* | *:SMsoft*
-
     • `:StreamerModeSoft` (or `:SMsoft`) - Starts Streamer Mode in `'soft'` mode.
 
 
@@ -226,14 +223,14 @@ in a list-like table of strings like above.
 	be applied to. 
 	These can be filepaths, filetypes, or just files, in the format:
 
-	`paths = { bashrc = '*/.bashrc', config = '~/.config/*' }`
+	`paths = { '*/.bashrc', '~/.config/*' }`
 
 	Supports the `'*'` wildcard.
-	It is possible to set `paths = { all = '*' }` to enable 
+	It is possible to set `paths = { '*' }` to enable 
 	Streamer Mode in all files.
 
 	For example if I open `~/.bashrc`, and I haven't specified
-	the path `home = '~/'` or `bash = '*/.bashrc'` in `paths`, then
+	the path `'~/'` or `'*/.bashrc'` in `paths`, then
 	Streamer Mode will not hide any data in that file.
 
 
