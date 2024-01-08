@@ -149,18 +149,17 @@ To use [defaults](#default-settings) in addition to your own paths/filetypes:
 require('streamer-mode').setup({
   preset = true,
   paths = {
-    yaml_files = '*/*.yaml',
+    '*/*.yaml',
   },
 })  
 ```
   
 
 ### Custom Behavior and Style Options  
-If you want to customize (`conceal_char`, `exclude`, `level`, and `default_state`):  
+If you want to customize (`conceal_char`, `level`, and `default_state`):  
 ```lua  
 require('streamer-mode').setup({
   level = 'secure',
-  exclude = { 'bash_aliases', 'powershell' },
   default_state = 'off',
   conceal_char = 'X'  
 })  
@@ -176,17 +175,16 @@ Here's an example of a custom configuration:
 
 require('streamer-mode').setup({
   paths = {
-    -- You can use any name you want, the '*/path/*' is the important part.  
 	-- Any path in here will hide exports and .gitconfig personals. (and $env:s)  
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '~/.bash_aliases',
-    dotfiles = '~/.dotfiles/*',
-    nodotdot = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
+    '*/venv/*',
+    '*/virtualenv/*',
+    '*/.env',
+    '*/.config/*',
+    '~/.bash_aliases',
+    '~/.dotfiles/*',
+    '*/dotfiles/*',
+    '*.ps1',
+    '*/.gitconfig',
   },
   keywords = {
     token = true,
@@ -197,19 +195,18 @@ require('streamer-mode').setup({
   }
   level = 'edit', -- | 'secure' | 'soft'  
   default_state = 'on', -- | 'off'  
-  exclude = { 'powershell' },
   conceal_char = 'X' -- Can be any character  
 })  
 ```
 
 ### Enabling Streamer Mode for all files  
-While it is possible to enable Streamer Mode for all files, it's not recommended.  
-It's possible for this to slow down your editor. 
+While it is possible to enable Streamer Mode for all files.
+However, it's *possible* that doing this this can slow down your editor. 
 Most common files that will contain sensitive information are already in the defaults. 
 
-If you still want to do this despite that, here's how:  
+To enable Streamer Mode for all files, you can do the following:
 ```lua  
-require('streamer-mode').setup({ paths = { all = '*' } })  
+require('streamer-mode').setup({ paths = { '*' } })  
 ```
 
 ## Default Settings  
@@ -219,19 +216,18 @@ The default setup is as follows:
 ```lua  
 require('streamer-mode').setup({
   paths = {
-    -- You can use any name you want, the '*/path/*' is the important part.  
-	-- Any path in here will hide exports and .gitconfig personals. (and $env:s)  
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
-    configini = '*.ini',
-    secretsyaml = '*.yaml',
-    ssh = '*/.ssh/*',
+	-- Streamer Mode will apply to any path in here, and will hide any of the `keywords` below.
+    '*/venv/*',
+    '*/virtualenv/*',
+    '*/.env',
+    '*/.config/*',
+    '*/.bash_aliases',
+    '*/dotfiles/*',
+    '*.ps1',
+    '*/.gitconfig',
+    '*.ini',
+    '*.yaml',
+    '*/.ssh/*',
     }
   },
   level = 'secure', -- | 'edit' | 'soft'  
@@ -241,31 +237,31 @@ require('streamer-mode').setup({
   conceal_char = '*',  -- Default. This is what will be displayed instead  
                       -- of your secrets.  
 
-  exclude = { '' },  -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'  
-
   -- Any text appearing after one of the keywords specified here will be concealed.  
   -- They are case-insensitive.  
   -- E.g., passing in 'API_KEY' will conceal both 'API_KEY' and 'api_key'.  
-  keywords = { 
-    "api_key",
-    "token",
-    "client_secret",
-    "powershell",
-    "$env:",
-    "export",
-    "alias",
-    "name",
-    "userpassword",
-    "email",
-    "signingkey",
-    "IdentityFile",
-    "server",
-    "username",
-    "host",
-    "port",
-    "hostname",
-  }
-
+  keywords = {
+    'api_key',
+    'token',
+    'client_secret',
+    'powershell',
+    '$env:',
+    'export',
+    'alias',
+    'name',
+    'userpassword',
+    'username',
+    'user.name',
+    'user.password',
+    'user.email',
+    'email',
+    'signingkey',
+    'IdentityFile',
+    'server',
+    'host',
+    'port',
+    'credential.helper',
+  },
 })  
 
 ```
@@ -277,20 +273,19 @@ require('streamer-mode').setup({
 * `keywords`: List-like Table of strings. Keywords that will be concealed.  
     * Any text that appears **after** one of these keywords will be concealed 
       with `conceal_char` (default is `*`).  
-* `paths`: Dictionary-like Table. The paths/files that Streamer Mode will apply to.  
-    * Pass in paths in the format: `paths = { name = '*/path/* }`
-    * Pass in filetypes in the same format: ` paths = { name = '*.txt }`
-    * You can apply streamer mode to ALL files (not recommended): `paths = { all = '*' }`
+    * It is possible to pass a Vim basic regular expression as a keyword.  
+* `paths`: List-like Table. The paths/files that Streamer Mode will apply to.  
+    * Pass in paths in the format: `paths = { '*/path/* }`
+    * Pass in filetypes in the same format: ` paths = { '*.txt }`
+    * You can apply streamer mode to ALL files (not recommended): `paths = { '*' }`
 * `level`: String. The level in which Streamer Mode will be in effect.  
   See more about the different [levels](#levels) below.  
 * `default_state`: Whether or not Streamer Mode will be active  
   when you first launch a Neovim session. It's recommended to set this to `'off'`,
   turning it on when needed.  
-* `exclude`: List-like table of strings. Only necessary if you want to use the  
-  some of the defaults, but not all of them.  
 * `conceal_char`: String. This is the character that will be displayed in place of your hidden text.  
 
-#### Example Custom Setup  
+### Example Custom Setup  
 
 > init.lua  
 
@@ -298,34 +293,23 @@ require('streamer-mode').setup({
 require('streamer-mode').setup({
   preset = true,
   paths = {
-    shell_scripts = '*.sh',
-    my_config = '*/.config/*',
-    venv = '*/venv/*',
-    aliases = '*/.bash_aliases',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
+    '*.sh',
+    '*/.config/*',
+    '*/venv/*',
+    '*/.bash_aliases',
+    '*.ps1',
+    '*/.gitconfig',
   },
   keywords = {
-    'api_key',
-    'token',
-    'client_secret',
-    'export',
-    'name',
-    'email',
-    'user.password',
-    'user.name',
-    'user.email',
-    'signingkey',
-    'IdentityFile',
-    'server',
-    'username',
-    'host',
-    'port',
-    'hostname',
-  },
+      "secret",
+      "api_key",
+      "token",
+      "auth_token",
+      "MySecretVariable",
+      "MyAddress",
+  }
   level = 'edit',
   default_state = 'on',
-  exclude = { 'powershell', 'dotfiles' }
 })  
 ```
 
