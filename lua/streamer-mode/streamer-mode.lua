@@ -108,11 +108,15 @@ function M.setup(user_opts)
 
   if user_opts.use_defaults or user_opts.use_defaults == nil then
     opts = vim.tbl_deep_extend('force', default_opts, user_opts)
-    for i = 1, #default_opts.paths do
-      opts.paths[#opts.paths + 1] = default_opts.paths[i]
+    if user_opts.paths then
+      for i = 1, #default_opts.paths do
+        opts.paths[#opts.paths + 1] = default_opts.paths[i]
+      end
     end
-    for i = 1, #default_opts.keywords do
-      opts.keywords[#opts.keywords + 1] = default_opts.keywords[i]
+    if user_opts.keywords then
+      for i = 1, #default_opts.keywords do
+        opts.keywords[#opts.keywords + 1] = default_opts.keywords[i]
+      end
     end
   elseif user_opts.use_defaults == false then
     opts = user_opts
@@ -146,7 +150,10 @@ end
 ---Callback for autocmds.
 function M:add_match_conceals()
   for i = 1, #self.opts.patterns do
-    table.insert(self._matches, vim.fn.matchadd('Conceal', self.opts.patterns[i], 9999, -1, { conceal = self.opts.conceal_char }))
+    table.insert(
+      self._matches,
+      vim.fn.matchadd('Conceal', self.opts.patterns[i], 9999, -1, { conceal = self.opts.conceal_char })
+    )
   end
 end
 
