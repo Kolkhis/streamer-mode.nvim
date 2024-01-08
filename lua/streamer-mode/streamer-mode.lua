@@ -2,20 +2,20 @@ M = {}
 
 local default_opts = {
   paths = {
-    -- The names are unimportant, only the paths matter.
-    -- Any path in here will hide exports, .gitconfig personals, $env: vars, etc
-    venv = '*/venv/*',
-    virtualenv = '*/virtualenv/*',
-    dotenv = '*/.env',
-    config = '*/.config/*',
-    aliases = '*/.bash_aliases',
-    dotfiles = '*/dotfiles/*',
-    powershell = '*.ps1',
-    gitconfig = '*/.gitconfig',
-    configini = '*.ini',
-    secretsyaml = '*.yaml',
-    ssh = '*/.ssh/*',
+    '*/venv/*',
+    '*/virtualenv/*',
+    '*/.env',
+    '*/.config/*',
+    '*/.bash_aliases',
+    '*/.bashrc',
+    '*/dotfiles/*',
+    '*.ps1',
+    '*/.gitconfig',
+    '*.ini',
+    '*.yaml',
+    '*/.ssh/*',
   },
+
   keywords = {
     'api_key',
     'token',
@@ -41,7 +41,6 @@ local default_opts = {
 
   level = 'secure', -- | 'edit' | 'soft'
   default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
-  exclude = { '' }, -- Any of the named defaults can go here, as strings. e.g., 'bash_aliases'
   conceal_char = '*',
   patterns = {},
 }
@@ -53,7 +52,6 @@ end
 
 M.opts = {}
 
-M.file_conceal_augroup = vim.api.nvim_create_augroup('StreamerModeFileConceal', { clear = true })
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
 M.cursor_levels = {
@@ -67,14 +65,13 @@ M.cursor_levels = {
 ---	  require('streamer-mode').setup({
 ---      -- Use all the default paths
 ---      preset = true,
----      -- Add more paths
----      paths = { project_dir = '~/projects/*' },
+---      -- Use custom paths
+---      paths = { '~/projects/*' },
 ---      -- Set Streamer Mode to be active when nvim is launched
 ---	     default_mode = 'on',
 ---      -- Set Streamer Mode behavior. :h sm.level
 ---	     level = 'edit',
 ---      -- A listlike table of default paths to exlude
----	     exclude = { 'powershell' }
 ---	     keywords = { 'export', 'alias', 'api_key' }
 ---	   })
 ---
@@ -83,7 +80,6 @@ M.cursor_levels = {
 ---     • keywords: table = { 'keywords', 'to', 'conceal' }
 ---     • paths: table = { any_name = '*/path/*' }
 ---     • level: string = 'secure' -- or: 'soft', 'edit'
----     • exclude: table = { 'default', 'path', 'names' }
 ---     • conceal_char: string = '*' -- default
 ---     • default_state: string = 'on' -- or 'off'
 ---     • levels:
@@ -99,63 +95,26 @@ M.cursor_levels = {
 ---          when the cursor is on the same line in any mode.
 ---
 --- :h streamer-mode.setup
----@param opts? table
+---@param user_opts? table
 ---keywords: list[string],
 ---paths: table,
----exclude: list[string],
 ---default_mode: string,
 ---conceal_char: string,
 ---level: string
 function M.setup(user_opts)
-  M.default_conceallevel = vim.o.conceallevel
   user_opts = user_opts or {}
   local opts = vim.tbl_deep_extend('force', default_opts, user_opts)
   M.opts = opts
 
-  if opts.paths then
-    for name, path in pairs(opts.paths) do
-      M.opts.paths[name] = vim.fs.normalize(path, { expand_env = true })
-    end
-  end
-
-  -- Remove any unwanted paths
-  if opts.exclude then
-    for _, name in ipairs(opts.exclude) do
-      M.opts.paths[name] = nil
-    end
-  end
-
-  -- Add custom keywords
-  if opts.keywords then
+  if table.concat(opts.keywords) ~= table.concat(default_opts.keywords) then
     M:generate_patterns(opts.keywords)
-  else
-    M:generate_patterns(M.opts.keywords)
   end
 
-  -- set conceal character
+  M.default_conceallevel = vim.o.conceallevel
   vim.o.concealcursor = M.cursor_levels[M.opts.level]
-  vim.o.conceallevel = 1
-  M.autocmds = vim.api.nvim_get_autocmds({ group = M._conceal_augroup })
-  M.opts.default_state = opts.default_state or M.opts.default_state
-  if M.opts.default_state == 'on' then
+  if opts.default_state == 'on' then
     M:start_streamer_mode()
-  else
-    vim.o.conceallevel = M.default_conceallevel
   end
-end
-
--- Not yet fully tested. Use setup() instead.
--- Add a single path (or file/type) to Streamer Mode.
--- setup({ paths = { name = '*/path/*' } }) is preferred.
--- example:
---	   add_path('bashrc', '*/.bashrc')
----@param name string
----@param path string
-function M:add_path(name, path)
-  if path:match('~') then
-    path = path:gsub('~', vim.fn.expand('~')) -- Essentially normalize while keeping globs
-  end
-  self.opts.paths[name] = path
 end
 
 ---Takes in a table in the format of { keyword = true }
@@ -164,14 +123,7 @@ end
 ---@param keywords table list
 function M:generate_patterns(keywords)
   for _, word in ipairs(keywords) do
-    -- Check for regex special characters
-    -- if word:find('%*|%[|%]') then
-    -- Replace special characters with their escaped equivalents
-    -- word = word:find('%*') and word:gsub([[%*]], [[\*]]) or word
-    -- word = word:find('%[') and word:gsub('%[', [[\[]]) or word
-    -- word = word:find('%]') and word:gsub('%]', [=[\]]=]) or word
-    -- end
-    M.opts.patterns[#M.opts.patterns + 1] = M._BaseKeywordConcealPattern:format(word)
+    self.opts.patterns[#self.opts.patterns + 1] = self._BaseKeywordConcealPattern:format(word)
   end
 end
 
@@ -192,6 +144,7 @@ function M:add_conceals()
   self:start_ssh_conceals()
   vim.o.conceallevel = 1
   self.enabled = true
+  self.autocmds = vim.api.nvim_get_autocmds({ group = M._conceal_augroup })
 end
 
 ---Turns off Streamer Mode (Removes Conceal commands)
@@ -228,10 +181,9 @@ end
 
 function M:toggle_streamer_mode()
   if self.enabled then
-    self:stop_streamer_mode()
-  else
-    self:start_streamer_mode()
+    return self:stop_streamer_mode()
   end
+  return self:start_streamer_mode()
 end
 
 M.ssh_conceal_pattern =
@@ -252,7 +204,7 @@ function M:add_ssh_key_conceals()
         self:start_ssh_conceals()
       end
     end,
-    group = self.file_conceal_augroup,
+    group = self.conceal_augroup,
   })
 end
 
