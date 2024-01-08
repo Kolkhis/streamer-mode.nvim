@@ -188,7 +188,8 @@ require('streamer-mode').setup({
   -- Use the default paths and keywords in addition to your own.  
   use_defaults = true,  
   paths = {
-	-- Any path in here will conceal any keywords in the `keywords` table.  
+    -- While working in any path or filetype listed here, streamer-mode will 
+    -- conceal all keywords in the `keywords` table.  
     '*/dotenv/*',
     '*/.env',
     '*.c',
