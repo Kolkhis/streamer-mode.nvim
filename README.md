@@ -57,36 +57,37 @@ You can specify your own keywords to conceal in the [`setup()`](#setup) function
 
 Install using your favorite plugin manager.  
 <details> 
-  <summary>packer.nvim</summary>
+  <summary>packer.nvim</summary>  
 
 ```lua  
 use('Kolkhis/streamer-mode.nvim')  
 ```
-</details>
+</details>  
 
 
-<details>
+<details>  
   <summary>lazy.nvim</summary> 
 
 ```lua  
 { 'Kolkhis/streamer-mode.nvim' },
 ```
-</details>
+</details>  
 
 
-<details>
-  <summary>vim-plug</summary>
+<details>  
+  <summary>vim-plug</summary>  
  
 ```vim  
 Plug 'Kolkhis/streamer-mode.nvim'  
 ```
-</details>
+</details>  
 
 ## Setup  
 
-###### *:h sm.setup*  
-
-In your `init.lua` file, add the following:  
+###### *:help sm.setup*  
+### Default Setup:  
+To enable streamer mode by default with the default settings, add the following  
+to your `init.lua` file:  
 ```lua  
 require('streamer-mode').setup()  
 ```
@@ -95,23 +96,17 @@ This will enable `streamer-mode.nvim` with the default settings.
 After restarting neovim, just run `:StreamerMode` or `:SM` to toggle on Streamer Mode.  
 It will be off by default.  
 
-`streamer-mode.nvim` applies filters to most of the files that will contain sensitive information by default. See [default settings](#default-settings).  
-
-
-### Default Setup:  
-To enable streamer mode by default with the default settings:  
-```lua  
-require('streamer-mode').setup()  
-```
-
-Streamer Mode is disabled by default, which means it won't turn on when Neovim is launched.  
 To enable Streamer Mode on launch:  
-
 ```lua  
 require('streamer-mode').setup({ default_state = 'on' })  
 ```
+
 Now Streamer Mode will be active every time a new Neovim session is launched.  
 Call `:StreamerModeOff` (`:SMoff`) to disable Streamer Mode, or simply toggle it with `:SM`.  
+
+
+`streamer-mode.nvim` applies filters to most of the files that will contain sensitive information by default. See [default settings](#default-settings).  
+
     
 
 ## Advanced Setup:  
@@ -167,10 +162,10 @@ require('streamer-mode').setup({ paths = { '*' } })
 
 
 ### Custom Behavior and Style Options  
-You can customize the following style and behavior options:
-* `conceal_char`: The character used to conceal text.
-* `level`: Determines the behavior of the concealed text (see [levels](#levels)).
-* `default_state`: Whether or not Streamer Mode is enabled when Neovim is launched.
+You can customize the following style and behavior options:  
+* `conceal_char`: The character used to conceal text.  
+* `level`: Determines the behavior of the concealed text (see [levels](#levels)).  
+* `default_state`: Whether or not Streamer Mode is enabled when Neovim is launched.  
 ```lua  
 require('streamer-mode').setup({
   level = 'secure',
