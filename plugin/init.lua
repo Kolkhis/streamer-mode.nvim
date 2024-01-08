@@ -1,3 +1,1 @@
-local sm = require('streamer-mode')
-sm.setup()
-
+require('streamer-mode')
