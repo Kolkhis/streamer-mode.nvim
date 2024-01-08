@@ -3,12 +3,15 @@ M = {}
 local default_opts = {
   paths = {
     '*/venv/*',
+    '*/.venv/*',
     '*/virtualenv/*',
     '*/.env',
     '*/.config/*',
     '*/.bash_aliases',
     '*/.bashrc',
+    '*/.dotfiles/*',
     '*/dotfiles/*',
+    '*.sh',
     '*.ps1',
     '*/.gitconfig',
     '*.ini',
