@@ -97,7 +97,7 @@ M.cursor_levels = {
 --- :h streamer-mode.setup
 ---@param user_opts? table
 ---keywords: list[string],
----paths: table,
+---paths: list[string],
 ---default_mode: string,
 ---conceal_char: string,
 ---level: string
