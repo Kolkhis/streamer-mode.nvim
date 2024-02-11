@@ -80,7 +80,19 @@ streamer-mode.setup({opts})
 <
 
 The `paths` listed in the example are on by default. Disable them by 
-passing your own paths to the |sm.setup()| function.
+passing your own paths to the |sm.setup()| function:
+    >lua
+
+    require('streamer-mode').setup({
+      use_defaults = true,
+      -- Add your own paths and filetypes for Streamer Mode to be enabled in.  
+      paths = {
+	'*/*.yaml',  -- Enables Streamer Mode for all YAML files.
+	'*/.bash*',  -- Enables Streamer Mode for all Bash configuration files.
+	'~/',        -- Enables Streamer Mode for all files in your home directory.
+      },
+    })  
+<
 
 The |keywords| listed above are active by default. More can be added by 
 calling the |sm.setup()| function.
@@ -223,14 +235,14 @@ in a list-like table of strings like above.
 	be applied to. 
 	These can be filepaths, filetypes, or just files, in the format:
 
-	`paths = { '*/.bashrc', '~/.config/*' }`
+	`paths = { '*/.bash*', '~/.config/*' }`
 
 	Supports the `'*'` wildcard.
 	It is possible to set `paths = { '*' }` to enable 
 	Streamer Mode in all files.
 
 	For example if I open `~/.bashrc`, and I haven't specified
-	the path `'~/'` or `'*/.bashrc'` in `paths`, then
+	the path `'~/'` or `'*/.bash*'` in `paths`, then
 	Streamer Mode will not hide any data in that file.
 
 
