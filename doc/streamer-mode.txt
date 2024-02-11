@@ -89,7 +89,7 @@ passing your own paths to the |sm.setup()| function:
       paths = {
 	'*/*.yaml',  -- Enables Streamer Mode for all YAML files.
 	'*/.bash*',  -- Enables Streamer Mode for all Bash configuration files.
-	'~/',        -- Enables Streamer Mode for all files in your home directory.
+	'~/*',        -- Enables Streamer Mode for all files in your home directory.
       },
     })  
 <
@@ -242,7 +242,7 @@ in a list-like table of strings like above.
 	Streamer Mode in all files.
 
 	For example if I open `~/.bashrc`, and I haven't specified
-	the path `'~/'` or `'*/.bash*'` in `paths`, then
+	the path `'~/*'` or `'*/.bash*'` in `paths`, then
 	Streamer Mode will not hide any data in that file.
 
 

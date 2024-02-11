@@ -227,7 +227,7 @@ E.g., passing in `API_KEY` will conceal both `API_KEY` and `api_key`.
 `streamer-mode.nvim` does not apply to all files by default.  
 
 For example, if I open `~/.bashrc` with Streamer Mode enabled, and  
-I haven't specified the path `'~/'` or `'*/.bash*'` in `paths`, then  
+I haven't specified the path `'~/*'` or `'*/.bash*'` in `paths`, then  
 Streamer Mode will not hide any data in that file.  
 
 
@@ -243,7 +243,7 @@ require('streamer-mode').setup({
   paths = {
     '*/*.yaml',  -- Enables Streamer Mode for all YAML files.  
     '*/.bash*',  -- Enables Streamer Mode for all Bash configuration files.  
-    '~/',        -- Enables Streamer Mode for all files in your home directory.  
+    '~/*',        -- Enables Streamer Mode for all files in your home directory.  
   },
 })  
 ```
