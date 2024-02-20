@@ -1,56 +1,56 @@
 M = {}
 
 local default_opts = {
-  paths = {
-    '*/venv/*',
-    '*/.venv/*',
-    '*/virtualenv/*',
-    '*/.env',
-    '*/.config/*',
-    '*/.bash_aliases',
-    '*/.bashrc',
-    '*/.dotfiles/*',
-    '*/dotfiles/*',
-    '*.sh',
-    '*.ps1',
-    '*/.gitconfig',
-    '*.ini',
-    '*.yaml',
-    '*/.ssh/*',
-  },
+    paths = {
+        '*/venv/*',
+        '*/.venv/*',
+        '*/virtualenv/*',
+        '*/.env',
+        '*/.config/*',
+        '*/.bash_aliases',
+        '*/.bashrc',
+        '*/.dotfiles/*',
+        '*/dotfiles/*',
+        '*.sh',
+        '*.ps1',
+        '*/.gitconfig',
+        '*.ini',
+        '*.yaml',
+        '*/.ssh/*',
+    },
 
-  keywords = {
-    'api_key',
-    'token',
-    'client_secret',
-    'powershell',
-    '$env:',
-    'export',
-    'alias',
-    'name',
-    'userpassword',
-    'username',
-    'user.name',
-    'user.password',
-    'user.email',
-    'email',
-    'signingkey',
-    'IdentityFile',
-    'server',
-    'host',
-    'port',
-    'credential.helper',
-  },
+    keywords = {
+        'api_key',
+        'token',
+        'client_secret',
+        'powershell',
+        '$env:',
+        'export',
+        'alias',
+        'name',
+        'userpassword',
+        'username',
+        'user.name',
+        'user.password',
+        'user.email',
+        'email',
+        'signingkey',
+        'IdentityFile',
+        'server',
+        'host',
+        'port',
+        'credential.helper',
+    },
 
-  level = 'secure', -- | 'edit' | 'soft'
-  default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
-  conceal_char = '*',
-  patterns = {},
+    level = 'secure', -- | 'edit' | 'soft'
+    default_state = 'off', -- Whether or not streamer mode turns on when nvim is launched.
+    conceal_char = '*',
+    patterns = {},
 }
 
 M._BaseKeywordConcealPattern = [[^\(\s*\)\?\c\(\%%['"]%s\%%['"]\%%(\s\{-}\)\?\)\zs.*$]]
 for _, keyword in ipairs(default_opts.keywords) do
-  default_opts.patterns[#default_opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
+    default_opts.patterns[#default_opts.patterns + 1] = M._BaseKeywordConcealPattern:format(keyword)
 end
 
 M.opts = {}
@@ -58,9 +58,9 @@ M.opts = {}
 M.conceal_augroup = vim.api.nvim_create_augroup('StreamerMode', { clear = true })
 M._matches = {}
 M.cursor_levels = {
-  secure = 'ivnc',
-  edit = 'vn',
-  soft = '',
+    secure = 'ivnc',
+    edit = 'vn',
+    soft = '',
 }
 
 --- Setup function for the user. Configures default behavior.
@@ -106,38 +106,38 @@ M.cursor_levels = {
 ---conceal_char: string,
 ---level: string
 function M.setup(user_opts)
-  user_opts = user_opts or {}
-  local opts = {}
+    user_opts = user_opts or {}
+    local opts = {}
 
-  if user_opts.use_defaults or user_opts.use_defaults == nil then
-    opts = vim.tbl_deep_extend('force', default_opts, user_opts)
-    if user_opts.paths then
-      for i = 1, #default_opts.paths do
-        opts.paths[#opts.paths + 1] = default_opts.paths[i]
-      end
+    if user_opts.use_defaults or user_opts.use_defaults == nil then
+        opts = vim.tbl_deep_extend('force', default_opts, user_opts)
+        if user_opts.paths then
+            for i = 1, #default_opts.paths do
+                opts.paths[#opts.paths + 1] = default_opts.paths[i]
+            end
+        end
+        if user_opts.keywords then
+            for i = 1, #default_opts.keywords do
+                opts.keywords[#opts.keywords + 1] = default_opts.keywords[i]
+            end
+        end
+    elseif user_opts.use_defaults == false then
+        opts = user_opts
     end
-    if user_opts.keywords then
-      for i = 1, #default_opts.keywords do
-        opts.keywords[#opts.keywords + 1] = default_opts.keywords[i]
-      end
+
+    M.opts = opts
+
+    if opts.keywords and default_opts.keywords then
+        if table.concat(opts.keywords) ~= table.concat(default_opts.keywords) then
+            M:generate_patterns(opts.keywords)
+        end
     end
-  elseif user_opts.use_defaults == false then
-    opts = user_opts
-  end
 
-  M.opts = opts
-
-  if opts.keywords and default_opts.keywords then
-    if table.concat(opts.keywords) ~= table.concat(default_opts.keywords) then
-      M:generate_patterns(opts.keywords)
+    M.default_conceallevel = vim.o.conceallevel
+    vim.o.concealcursor = M.cursor_levels[M.opts.level]
+    if opts.default_state == 'on' then
+        M:start_streamer_mode()
     end
-  end
-
-  M.default_conceallevel = vim.o.conceallevel
-  vim.o.concealcursor = M.cursor_levels[M.opts.level]
-  if opts.default_state == 'on' then
-    M:start_streamer_mode()
-  end
 end
 
 ---Takes in a table in the format of { keyword = true }
@@ -145,93 +145,93 @@ end
 ---the conceal patterns.
 ---@param keywords table list
 function M:generate_patterns(keywords)
-  for i = 1, #keywords do
-    self.opts.patterns[#self.opts.patterns + 1] = self._BaseKeywordConcealPattern:format(keywords[i])
-  end
+    for i = 1, #keywords do
+        self.opts.patterns[#self.opts.patterns + 1] = self._BaseKeywordConcealPattern:format(keywords[i])
+    end
 end
 
 ---Callback for autocmds.
 function M:add_match_conceals()
-  for i = 1, #self.opts.patterns do
-    table.insert(
-      self._matches,
-      vim.fn.matchadd('Conceal', self.opts.patterns[i], 9999, -1, { conceal = self.opts.conceal_char })
-    )
-  end
+    for i = 1, #self.opts.patterns do
+        table.insert(
+            self._matches,
+            vim.fn.matchadd('Conceal', self.opts.patterns[i], 9999, -1, { conceal = self.opts.conceal_char })
+        )
+    end
 end
 
 ---Activates Streamer Mode
 function M:add_conceals()
-  vim.fn.clearmatches()
-  self._matches = {}
-  self:setup_conceal_autocmds()
-  self:setup_ssh_conceal_autocmds()
-  self:add_match_conceals()
-  self:start_ssh_conceals()
-  vim.o.conceallevel = 1
-  self.enabled = true
-  self.autocmds = vim.api.nvim_get_autocmds({ group = M.conceal_augroup })
+    vim.fn.clearmatches()
+    self._matches = {}
+    self:setup_conceal_autocmds()
+    self:setup_ssh_conceal_autocmds()
+    self:add_match_conceals()
+    self:start_ssh_conceals()
+    vim.o.conceallevel = 1
+    self.enabled = true
+    self.autocmds = vim.api.nvim_get_autocmds({ group = M.conceal_augroup })
 end
 
 ---Turns off Streamer Mode (Removes Conceal commands)
 function M:remove_conceals()
-  vim.api.nvim_clear_autocmds({ group = self.conceal_augroup })
-  vim.fn.clearmatches()
-  self._matches = {}
-  vim.o.conceallevel = self.default_conceallevel
-  self.enabled = false
+    vim.api.nvim_clear_autocmds({ group = self.conceal_augroup })
+    vim.fn.clearmatches()
+    self._matches = {}
+    vim.o.conceallevel = self.default_conceallevel
+    self.enabled = false
 end
 
 ---Sets up conceals for environment variables
 function M:setup_conceal_autocmds()
-  for _, path in pairs(self.opts.paths) do
-    vim.api.nvim_create_autocmd({ 'BufEnter' }, {
-      pattern = path,
-      callback = function()
-        self:add_match_conceals()
-      end,
-      group = self.conceal_augroup,
-    })
-  end
+    for _, path in pairs(self.opts.paths) do
+        vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+            pattern = path,
+            callback = function()
+                self:add_match_conceals()
+            end,
+            group = self.conceal_augroup,
+        })
+    end
 end
 
 ---Starts Streamer Mode. Alias for `add_conceals()`
 function M:start_streamer_mode()
-  self:add_conceals()
+    self:add_conceals()
 end
 
 ---Stops Streamer Mode. Alias for `remove_conceals()`
 function M:stop_streamer_mode()
-  self:remove_conceals()
+    self:remove_conceals()
 end
 
 function M:toggle_streamer_mode()
-  if self.enabled then
-    return self:stop_streamer_mode()
-  end
-  return self:start_streamer_mode()
+    if self.enabled then
+        return self:stop_streamer_mode()
+    end
+    return self:start_streamer_mode()
 end
 
 M.ssh_conceal_pattern =
-  [[^-\{1,}BEGIN OPENSSH PRIVATE KEY-\{-1,}\n\zs\(\_.\{-}\)\ze-\{1,}END OPENSSH PRIVATE KEY-\{-1,}\n\?]]
+    [[^-\{1,}BEGIN OPENSSH PRIVATE KEY-\{-1,}\n\zs\(\_.\{-}\)\ze-\{1,}END OPENSSH PRIVATE KEY-\{-1,}\n\?]]
 function M:start_ssh_conceals()
-  table.insert(
-    self._matches,
-    vim.fn.matchadd('Conceal', self.ssh_conceal_pattern, 9999, -1, { conceal = self.opts.conceal_char })
-  )
+    table.insert(
+        self._matches,
+        vim.fn.matchadd('Conceal', self.ssh_conceal_pattern, 9999, -1, { conceal = self.opts.conceal_char })
+    )
 end
 
 function M:setup_ssh_conceal_autocmds()
-  vim.api.nvim_create_autocmd({ 'BufEnter' }, {
-    pattern = '*/.ssh/id_*',
-    callback = function()
-      -- Check that the filename doesn't end with .pub
-      if vim.fn.expand('%:e') ~= 'pub' then
-        self:start_ssh_conceals()
-      end
-    end,
-    group = self.conceal_augroup,
-  })
+    vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+        pattern = '*/.ssh/id_*',
+        callback = function()
+            -- Check that the filename doesn't end with .pub
+            if vim.fn.expand('%:e') ~= 'pub' then
+                self:start_ssh_conceals()
+            end
+        end,
+        group = self.conceal_augroup,
+    })
 end
 
 return M
