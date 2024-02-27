@@ -23,50 +23,28 @@ streamer-mode.setup({opts})
 
     Usage: ~
     >lua
-    Defaults can be used by calling like:
+    Defaults can be used by simply calling:
     
-        require('streamer-mode').setup({ preset = true })
+        require('streamer-mode').setup()
 
-    To set up a custom config:
+
+
+    An example of a custom configuration might look something like this:
+
     require('streamer-mode').setup{
+	-- Use default keywords in addition to your own
+	use_defaults = true,
         keywords = {
-          'api_key',
-          'token',
-          'client_secret',
-          'powershell',
-          '$env:',
-          'export',
-          'alias',
-          'name',
-          'userpassword',
-          'username',
-          'user.name',
-          'user.password',
-          'user.email',
+          'address',
+          'phone_number',
+          'full_name',
+          'SSN',
           'email',
-          'signingkey',
-          'IdentityFile',
-          'server',
-          'host',
-          'port',
-          'credential.helper',
         },
 	paths = {
-        -- name = '*/path/*',
-        -- Default:
-	    venv = '*/venv/*',
-	    virtualenv = '*/virtualenv/*',
-	    dotenv = '*/.env',
-	    config = '*/.config/*',
-	    aliases = '*/.bash_aliases',
-	    dotfiles = '*/dotfiles/*',
-	    powershell = '*.ps1',
-	    gitconfig = '*/.gitconfig',
-	    configini = '*/*.ini',
-	    yaml_secrets = '*/*.yaml',
-	-- Use any name, only the paths will be used.
+        -- Defaults to all paths and filetypes:
+	    '*',
       },
-
 
       level = 'secure', -- | 'edit' | 'soft' (see more info below)
 
@@ -75,21 +53,22 @@ streamer-mode.setup({opts})
 
       conceal_char = '*'  -- Default. This is what will be displayed instead
 			  -- of your secrets.
-
     })
 <
 
-The `paths` listed in the example are on by default. Disable them by 
-passing your own paths to the |sm.setup()| function:
+The `paths` option defaults to all paths and filetypes. 
+This means that `streamer-mode.nvim` will be enabled in all buffers.
+
+You can change this by passing your own paths to 
+the |sm.setup()| function:
     >lua
 
     require('streamer-mode').setup({
-      use_defaults = true,
       -- Add your own paths and filetypes for Streamer Mode to be enabled in.  
       paths = {
 	'*/*.yaml',  -- Enables Streamer Mode for all YAML files.
 	'*/.bash*',  -- Enables Streamer Mode for all Bash configuration files.
-	'~/*',        -- Enables Streamer Mode for all files in your home directory.
+	'~/*',       -- Enables Streamer Mode for all files in your home directory.
       },
     })  
 <
@@ -238,11 +217,12 @@ in a list-like table of strings like above.
 	`paths = { '*/.bash*', '~/.config/*' }`
 
 	Supports the `'*'` wildcard.
-	It is possible to set `paths = { '*' }` to enable 
-	Streamer Mode in all files.
 
-	For example if I open `~/.bashrc`, and I haven't specified
-	the path `'~/*'` or `'*/.bash*'` in `paths`, then
+	`paths = { '*' }` enables Streamer Mode in all files (this is the 
+	default).
+
+	For example if you open `~/.bashrc`, and you haven't specified
+	a matching path (e.g., `'~/*'` or `'*/.bash*'`) in `paths`, then
 	Streamer Mode will not hide any data in that file.
 
 

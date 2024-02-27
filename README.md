@@ -14,26 +14,28 @@ If you find a bug, please let me know! I'll try to fix it as soon as I can.
 
 > #### Side note: It's recommended that you find a more secure way to store VERY private information than in plain text environment variables. But sometimes it's just easier for a temporary solution.  
 
+If anyone has any requests for new customizations or other features, please don't hesitate to let me know.  
+Just [open an issue](https://github.com/Kolkhis/streamer-mode.nvim/issues)!  
 
 
-If anyone has any requests for new customizations or other features, please don't hesitate to let me know. Just [open an issue](https://github.com/Kolkhis/streamer-mode.nvim/issues)!  
-
-## Table of Contents  
-
-* [Installation](#installation)  
-* [Setup](#setup)  
-    * [Default Setup](#default-setup)  
-    * [Advanced Setup](#advanced-setup)  
-        * [Default Settings](#default-settings)  
-        * [`setup()` Parameters](#setup-parameters)  
-        * [Setting Keyword to Conceal](#setting-keywords-to-conceal)  
-        * [Custom Paths and Filetypes](#custom-paths-and-filetypes)  
-            * [Enabling Stremer Mode for All Files](#enabling-streamer-mode-for-all-files)  
-        * [Custom Behavior and Style Options](#custom-behavior-and-style-options)  
-        * [Example Custom Setup](#example-custom-setup)  
-* [Levels](#levels)  
-* [Commands](#commands)  
-* [Current Features](#current-features)  
+## Table of Contents
+* [Current Features](#current-features) 
+* [Installation](#installation) 
+* [Setup](#setup) 
+    * [Default Setup](#default-setup) 
+* [Usage](#usage) 
+* [Commands](#commands) 
+* [Advanced Setup](#advanced-setup) 
+* [Default Settings](#default-settings) 
+* [Setup Parameters](#setup-parameters) 
+    * [Setting Keywords to Conceal](#setting-keywords-to-conceal) 
+    * [Setting Paths and Filetypes](#setting-paths-and-filetypes) 
+    * [Enabling Streamer Mode in all files](#enabling-streamer-mode-in-all-files) 
+    * [Custom Behavior and Style Options](#custom-behavior-and-style-options) 
+    * [Example Custom Setup](#example-custom-setup) 
+* [Levels](#levels) 
+* [Currently Working On](#currently-working-on) 
+* [Known Issues](#known-issues) 
 
 
 ## Current Features  
@@ -112,6 +114,33 @@ Call `:StreamerModeOff` (`:SMoff`) to disable Streamer Mode, or simply toggle it
 
     
 
+## Usage  
+
+Streamer Mode will be off be default, unless `default_state = 'on'` is passed during [setup](#setup)).  
+To toggle it on, use the command `:SM`, or `:SM(level)`.  
+Here's an example of binding it to a key:  
+```lua  
+vim.keymap.set('n', '<leader>sm', '<cmd>SM<CR>', { silent = true })  
+```
+Now `<leader>sm` will toggle Streamer Mode on and off.  
+
+
+## Commands  
+
+###### *:h sm.commands*  
+
+There are five commands available for Streamer Mode.  
+Each command has an alias for easier typing.  
+The new mode will go into effect once the command is called.  
+
+* `:StreamerMode` (`:SM`) - Toggle Streamer Mode on and off.  
+* `:StreamerModeOff` (`:SMoff`) - Shuts off Streamer Mode.  
+* `:StreamerModeSecure` (`:SMsecure`) - Starts streamer mode with `secure` level enabled.  
+* `:StreamerModeEdit` (`:SMedit`) - Starts streamer mode with `edit` level enabled.  
+* `:StreamerModeSoft` (`:SMsoft`) - Starts streamer mode with `soft` level enabled.  
+  
+
+
 ## Advanced Setup:  
 ##### These are just examples. To jump to all configuration options, see the [parameters](#Setup-Parameters) section.  
 
@@ -120,25 +149,11 @@ Call `:StreamerModeOff` (`:SMoff`) to disable Streamer Mode, or simply toggle it
 The default settings are as follows:  
 ```lua  
 require('streamer-mode').setup({
-  -- Streamer Mode will apply to any path in here.  
+  -- Streamer Mode will apply to any path in here. Defaults to all paths. 
   -- This means that Streamer Mode will hide any of the `keywords` below 
   -- when inside any of these directories or filetypes.  
   paths = {
-    '*/venv/*',
-    '*/.venv/*',
-    '*/virtualenv/*',
-    '*/.env',
-    '*/.config/*',
-    '*/.bash_aliases',
-    '*/.bashrc',
-    '*/.dotfiles/*',
-    '*/dotfiles/*',
-    '*.sh',
-    '*.ps1',
-    '*/.gitconfig',
-    '*.ini',
-    '*.yaml',
-    '*/.ssh/*',
+    '*',
   },
 
   -- Any text appearing after one of the keywords specified here will be concealed.  
@@ -179,7 +194,7 @@ require('streamer-mode').setup({
 
 ## Setup Parameters:  
 
-##### All optional. Just calling this function will use the defaults.  
+##### All optional. Simply calling `require('streamer-mode').setup()` will use the defaults.  
 
 * `use_defaults` (Boolean): Whether or not to use the default paths and keywords.  
     * If you do not specify this parameter, it will default to `true`.  
@@ -192,9 +207,8 @@ require('streamer-mode').setup({
 * `paths` (List-like Table): The paths and filetypes that Streamer Mode will apply to.  
     * Pass in paths in the format: `paths = { '*/path/*' }`
     * Pass in filetypes in the same format: ` paths = { '*.txt' }`
-    * You can apply streamer mode to all files ([may slow down your editor](#enabling-streamer-mode-for-all-files)): `paths = { '*' }`
 * `level` (String): The level in which Streamer Mode will be in effect.  
-  See more about the different [levels](#levels) below.  
+    * See more about the different [levels](#levels) below.  
 * `default_state` (String): Whether or not Streamer Mode will be active  
   when you first launch a Neovim session. It's recommended to set this to `'off'`,
   turning it on when needed.  
@@ -224,40 +238,25 @@ E.g., passing in `API_KEY` will conceal both `API_KEY` and `api_key`.
 
 
 ### Setting Paths and Filetypes 
-`streamer-mode.nvim` does not apply to all files by default.  
+`streamer-mode.nvim` applies to all files by default.  
+If you want to apply Streamer Mode to only certain paths or filetypes,
+pass them in as a list to the `require('streamer-mode').setup()` function.
 
-For example, if I open `~/.bashrc` with Streamer Mode enabled, and  
-I haven't specified the path `'~/*'` or `'*/.bash*'` in `paths`, then  
-Streamer Mode will not hide any data in that file.  
-
-
-
-To add your own paths and filetypes for `streamer-mode.nvim` to be enabled in,  
-pass them in as a list-like table to the `require('streamer-mode').setup()` function.  
-
-To use [defaults](#default-settings) in addition to your own paths/filetypes:  
+For example, to apply Streamer Mode to only files in your home directory,
+pass in `~/*`.  
 ```lua  
 require('streamer-mode').setup({
-  use_defaults = true,
   -- Add your own paths and filetypes for Streamer Mode to be enabled in.  
   paths = {
     '*/*.yaml',  -- Enables Streamer Mode for all YAML files.  
     '*/.bash*',  -- Enables Streamer Mode for all Bash configuration files.  
-    '~/*',        -- Enables Streamer Mode for all files in your home directory.  
+    '~/*',       -- Enables Streamer Mode for all files in your home directory.  
   },
 })  
 ```
 
 ### Enabling Streamer Mode in all files  
-It is possible to enable Streamer Mode for all files.  
-However, it's *possible* that doing this this can slow down your editor if you  
-are editing a large file with a lot of keywords enabled.  
-Most common files that will contain sensitive information are already in the defaults. 
-
-To enable Streamer Mode for all files, you can do the following:  
-```lua  
-require('streamer-mode').setup({ paths = { '*' } })  
-```
+Streamer Mode is now enabled in all files by default.
 
 
 ### Custom Behavior and Style Options  
@@ -286,8 +285,8 @@ require('streamer-mode').setup({
   -- Use the default paths and keywords in addition to your own.  
   use_defaults = true,  
   paths = {
-    -- While working in any path or filetype listed here, streamer-mode will 
-    -- conceal all keywords in the `keywords` table.  
+    -- While working in buffers that match any path or filetype listed here,
+    -- streamer-mode will conceal all keywords in the `keywords` table.  
     '*/dotenv/*',
     '*/.env',
     '*.c',
@@ -328,32 +327,6 @@ when the cursor is on the same line in any mode.
 
 
 
-## Commands  
-
-###### *:h sm.commands*  
-
-There are five commands available for Streamer Mode.  
-Each command has an alias for easier typing.  
-The new mode will go into effect once the command is called.  
-
-* `:StreamerMode` (`:SM`) - Toggle Streamer Mode on and off.  
-* `:StreamerModeOff` (`:SMoff`) - Shuts off Streamer Mode.  
-* `:StreamerModeSecure` (`:SMsecure`) - Starts streamer mode with `secure` level enabled.  
-* `:StreamerModeEdit` (`:SMedit`) - Starts streamer mode with `edit` level enabled.  
-* `:StreamerModeSoft` (`:SMsoft`) - Starts streamer mode with `soft` level enabled.  
-  
-
-## Usage  
-
-Streamer Mode will be off be default, unless `default_state = 'on'` is passed during [setup](#setup)).  
-To toggle it on, use the command `:SM`, or `:SM(level)`.  
-Here's an example of binding it to a key:  
-```lua  
-vim.keymap.set('n', '<leader>sm', '<cmd>SM<CR>', { silent = true })  
-```
-Now `<leader>sm` will toggle Streamer Mode on and off.  
-
-
 
 ## Currently Working On  
 
@@ -363,5 +336,9 @@ Now `<leader>sm` will toggle Streamer Mode on and off.
 
 ## Known Issues  
 
-* None. Find something? Open an issue!  
+* Concealing doesn't currently work in Telescope pickers/previwers.
+
+
+
+
   
