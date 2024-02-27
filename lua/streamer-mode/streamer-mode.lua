@@ -222,7 +222,7 @@ end
 
 function M:setup_ssh_conceal_autocmds()
     vim.api.nvim_create_autocmd({ 'BufEnter' }, {
-        pattern = '*/.ssh/id_*',
+        pattern = '*/.ssh/*',
         callback = function()
             -- Check that the filename doesn't end with .pub
             if vim.fn.expand('%:e') ~= 'pub' then
