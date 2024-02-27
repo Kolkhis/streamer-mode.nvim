@@ -2,21 +2,7 @@ M = {}
 
 local default_opts = {
     paths = {
-        '*/venv/*',
-        '*/.venv/*',
-        '*/virtualenv/*',
-        '*/.env',
-        '*/.config/*',
-        '*/.bash_aliases',
-        '*/.bashrc',
-        '*/.dotfiles/*',
-        '*/dotfiles/*',
-        '*.sh',
-        '*.ps1',
-        '*/.gitconfig',
-        '*.ini',
-        '*.yaml',
-        '*/.ssh/*',
+        '*',
     },
 
     keywords = {
@@ -79,7 +65,7 @@ M.cursor_levels = {
 ---	   })
 ---
 --- Parameters: ~
----   • {opts}  Table of named paths
+---   • {opts} Optional Table of named paths
 ---     • use_defaults: boolean = true | false
 ---     • keywords: table = { 'keywords', 'to', 'conceal' }
 ---     • paths: table = { '*/paths/*', '*to_use/*' }
@@ -105,7 +91,7 @@ M.cursor_levels = {
 ---default_mode: string,
 ---conceal_char: string,
 ---level: string
-function M.setup(user_opts)
+function M:configure_options(user_opts)
     user_opts = user_opts or {}
     local opts = {}
 
@@ -125,19 +111,24 @@ function M.setup(user_opts)
         opts = user_opts
     end
 
-    M.opts = opts
+    self.opts = opts
 
     if opts.keywords and default_opts.keywords then
         if table.concat(opts.keywords) ~= table.concat(default_opts.keywords) then
-            M:generate_patterns(opts.keywords)
+            self:generate_patterns(opts.keywords)
         end
     end
 
-    M.default_conceallevel = vim.o.conceallevel
-    vim.o.concealcursor = M.cursor_levels[M.opts.level]
+    self.default_conceallevel = vim.o.conceallevel
+    vim.o.concealcursor = self.cursor_levels[self.opts.level]
     if opts.default_state == 'on' then
-        M:start_streamer_mode()
+        self:start_streamer_mode()
     end
+end
+
+---Alias for `configure_options`
+function M.setup(opts)
+    M:configure_options(opts)
 end
 
 ---Takes in a table in the format of { keyword = true }
@@ -162,24 +153,32 @@ end
 
 ---Activates Streamer Mode
 function M:add_conceals()
-    vim.fn.clearmatches()
-    self._matches = {}
+    self:clear_matches()
     self:setup_conceal_autocmds()
     self:setup_ssh_conceal_autocmds()
     self:add_match_conceals()
     self:start_ssh_conceals()
     vim.o.conceallevel = 1
     self.enabled = true
-    self.autocmds = vim.api.nvim_get_autocmds({ group = M.conceal_augroup })
+    -- self.autocmds = vim.api.nvim_get_autocmds({ group = self.conceal_augroup })
 end
 
 ---Turns off Streamer Mode (Removes Conceal commands)
 function M:remove_conceals()
     vim.api.nvim_clear_autocmds({ group = self.conceal_augroup })
-    vim.fn.clearmatches()
-    self._matches = {}
-    vim.o.conceallevel = self.default_conceallevel
+    self:clear_matches()
     self.enabled = false
+    vim.o.conceallevel = self.default_conceallevel
+end
+
+--- Remove all the matches made with matchadd()
+function M:clear_matches()
+    if self._matches then
+        for i = 1, #self._matches do
+            vim.fn.matchdelete(self._matches[i])
+        end
+        self._matches = {}
+    end
 end
 
 ---Sets up conceals for environment variables
