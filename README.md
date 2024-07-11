@@ -13,9 +13,12 @@ If you find a bug, please let me know! I'll try to fix it as soon as I can.
 
 
 > #### Side note: It's recommended that you find a more secure way to store VERY private information than in plain text environment variables. But sometimes it's just easier for a temporary solution.  
+> #### NOTE: Streamer mode may affect `:help` docs, as it utilizes the `conceallevel` variable.
 
 If anyone has any requests for new customizations or other features, please don't hesitate to let me know.  
 Just [open an issue](https://github.com/Kolkhis/streamer-mode.nvim/issues)!  
+
+
 
 
 ## Table of Contents
